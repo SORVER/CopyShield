@@ -87,7 +87,7 @@ void Compare() {
             getline(*files[j], code2, '\0');
             TextProcessing(code1);
             TextProcessing(code2);
-            cout << code1 << ' ' << code2 << '\n';
+            // cout << code1 << ' ' << code2 << '\n';
             vector<string> grams1 = Generate_n_grams(code1, 3);
             vector<string> grams2 = Generate_n_grams(code2, 3);
             vector<long long> hashes1 = Hash_n_Grams(grams1);
@@ -95,8 +95,10 @@ void Compare() {
             vector<long long> fingerPrints1 = GetFingerPrints(hashes1, 5);
             vector<long long> fingerPrints2 = GetFingerPrints(hashes2, 5);
             double similarity = GetSimilarity(fingerPrints1, fingerPrints2);
-            cout << fixed << setprecision(2);
-            cout << "Similarity between file " << i << " and file " << j << " is " << similarity * 100 << "%" << '\n';
+            similarity *= 100;
+            if(similarity > 40){
+                cout << "File " << i << " and file " << j << " are likely most the same\n";
+            }
         }
     }
 }
