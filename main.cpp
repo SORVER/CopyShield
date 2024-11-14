@@ -4,6 +4,7 @@
 using namespace std;
 
 vector<shared_ptr<ifstream>> files;
+vector<string> Names;
 
 double GetSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2) {  // Jaccard Similarity
     set<long long> intersection;
@@ -19,6 +20,7 @@ double GetSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPr
             intersection.insert(i);
         }
     }
+    if(unionSet.size() == 0) return 0;
     return (double)intersection.size() / unionSet.size();
 }
 
@@ -79,28 +81,72 @@ void TextProcessing(string& code) {
     transform(code.begin(), code.end(), code.begin(), ::tolower);
 }
 
+std::vector<std::string> split(const std::string &str, char delimiter) {
+    std::vector<std::string> tokens;
+    std::stringstream ss(str);
+    std::string token;
+    
+    while (std::getline(ss, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    
+    return tokens;
+}
+
 void Compare() {
     for (int i = 0; i < files.size(); i++) {
         for (int j = i + 1; j < files.size(); j++) {
             string code1, code2;
+
+            // will be in this format 55643280_AC_SH3_H.cpp 
+            vector<string> firstSubInfo = split(Names[i], '_');
+            vector<string> secondSubInfo = split(Names[j], '_');
+
+            // for(int k = 0; k < firstSubInfo.size(); k++){
+            //     cout << firstSubInfo[k] << " ";
+            // }
+
+            if(firstSubInfo[1] != "AC" || secondSubInfo[1] != "AC") continue;
+            if(firstSubInfo[2] == secondSubInfo[2]) continue;
+            // if(firstSubInfo[3] != secondSubInfo[3]) continue;
+
+            
             getline(*files[i], code1, '\0');
+            files[i]->clear();               
+            files[i]->seekg(0, ios::beg);     
+            
             getline(*files[j], code2, '\0');
+            files[j]->clear();
+            files[j]->seekg(0, ios::beg);
+
+            if (code1.empty() || code2.empty()) {
+                continue;
+            }
+
             TextProcessing(code1);
             TextProcessing(code2);
-            // cout << code1 << ' ' << code2 << '\n';
+            
             vector<string> grams1 = Generate_n_grams(code1, 3);
             vector<string> grams2 = Generate_n_grams(code2, 3);
+
             vector<long long> hashes1 = Hash_n_Grams(grams1);
             vector<long long> hashes2 = Hash_n_Grams(grams2);
+
             vector<long long> fingerPrints1 = GetFingerPrints(hashes1, 5);
             vector<long long> fingerPrints2 = GetFingerPrints(hashes2, 5);
-            double similarity = GetSimilarity(fingerPrints1, fingerPrints2);
-            similarity *= 100;
-            if(similarity > 40){
-                cout << "File " << i << " and file " << j << " are likely most the same\n";
+
+            double similarity = GetSimilarity(fingerPrints1, fingerPrints2) * 100;
+
+            int lowerBound = 70 , upperBound = 80;
+
+            if (similarity > lowerBound && similarity < upperBound && Names[i].find("AC") != string::npos) {
+                cout << firstSubInfo.back() << ' ' << firstSubInfo[2] << ' ' <<  firstSubInfo[0] << ' ' << secondSubInfo[2] << ' ' << secondSubInfo[0] << " " << similarity << "\n";
             }
+
+            // cout << similarity << "% similarity between file " << i << " and file " << j << '\n';
         }
     }
+    cout << "Done\n";
 }
 
 int main(int argc, char *argv[]) {
@@ -119,6 +165,7 @@ int main(int argc, char *argv[]) {
         while ((entry = readdir(dir)) != NULL) {
             if (entry->d_type == DT_REG) {
                 string filePath = dirPath + "/" + entry->d_name;
+                Names.push_back(entry->d_name);
                 shared_ptr<ifstream> file = make_shared<ifstream>(filePath);
                 if (!file->is_open()) {
                     cerr << "Failed to open the file " << filePath << '\n';
@@ -130,7 +177,12 @@ int main(int argc, char *argv[]) {
     } catch (const exception& e) {
         cout << "Error: " << e.what() << '\n';
     }
+
     closedir(dir);
+    try{
     Compare();
+    } catch(const exception& e){
+        cout << "Error: " << e.what() << '\n';
+    }
     return 0;
 }
