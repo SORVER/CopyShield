@@ -14,7 +14,7 @@ CopyShield is a simple Plagiarism Detection tool, which reads collection of docu
 
 4. **Fingerprinting**: A sliding window approach is used to create fingerprints from the hashed n-grams, allowing efficient comparison.
 
-5. **Similarity Calculation**: The program computes Jaccard Similarity between fingerprints of each pair of files. If similarity exceeds a threshold (40%), it flags the files as likely duplicates.
+5. **Similarity Calculation**: The program computes Jaccard Similarity between fingerprints of each pair of files. If similarity exceeds a threshold , it flags the files as likely duplicates.
 
 ## Usage
 
