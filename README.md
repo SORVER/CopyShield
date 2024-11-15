@@ -29,5 +29,54 @@ g++ -std=c++17 main.cpp -o main
 ```
 
 
+## Options 
+
+* Set the threshold value for similarity
+    ```bash
+    --threshold, -t <value>
+    ```
+
+* Set the window size for fingerprinting
+    ```bash
+    --window-size, -w <value>
+    ```
+
+* Set the n-gram size
+    ```bash
+    --grams, -g <value>
+    ```
+
+* Set the prime value for hashing 
+    ```bash
+    --prime, -p <value>
+    ```
+
+* Exclude specific files (problem) 
+    ```bash
+    --exclude-problems, -e <problem1,problem2,...>
+    ```
+
+* Include only specific files (problem)
+    ```bash
+    --include-problems, -i <problem1,problem2,...>
+    ```
+
+* Display the help message showing the available options and their descriptions
+    ```bash
+    --help, -h
+    ```
+
+### Example
+
+```bash
+.\main .\problems -t 70 -w 5 -g 3 -p 101 -e problem1,problem2
+```
+
+
+
+
+
+
+
 
 
