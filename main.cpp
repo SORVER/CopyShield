@@ -34,6 +34,8 @@ struct submission{
 vector<shared_ptr<ifstream>> files;
 vector<submission> submissions;
 vector<pair<pair<submission, submission>, double>> similarSubmissions;
+vector<string> excludedProblems;
+vector<string> includedProblems;
 
 double GetSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2) {  // Jaccard Similarity
     set<long long> intersection;
@@ -135,8 +137,9 @@ void Compare() {
             if(submissions[i].verdict != "AC" || submissions[j].verdict != "AC") continue;
             if(submissions[i].username == submissions[j].username) continue;    
             if(submissions[i].problem != submissions[j].problem) continue;
+            if(find(excludedProblems.begin(), excludedProblems.end(), submissions[i].problem) != excludedProblems.end()) continue;
+            if(includedProblems.size() > 0 && find(includedProblems.begin(), includedProblems.end(), submissions[i].problem) == includedProblems.end()) continue;
 
-            
             getline(*files[i], code1, '\0');
             files[i]->clear();               
             files[i]->seekg(0, ios::beg);     
@@ -190,12 +193,93 @@ void exportCSV(){
     file.close();
 }
 
+void showUsage() {
+    cout << "Usage: ./main <directory_path> [options]\n";
+    cout << "Options:\n";
+    cout << "  --threshold, -t <value>    Set the threshold value for similarity (default: 40)\n";
+    cout << "  --exclude-problems, -e <problem1,problem2,...>    Exclude problems from comparison\n"; 
+    cout << "  --include-problems, -i <problem1,problem2,...>    Include only these problems in comparison\n";   
+    cout << "  --window-size, -w <value>    Set the window size for fingerprinting (default: 5)\n";
+    cout << "  --grams, -g <value>    Set the n-grams value for hashing (default: 3)\n";
+    cout << "  --prime, -p <value>    Set the prime value for hashing (default: 31)\n";
+    cout << "  --help, -h    Show this help message\n";
+
+}
+
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        cout << "Please provide the dir path\n";
-        return 0;
+    string dirPath;
+    try{
+        if(argc < 2) {
+            throw invalid_argument("Directory path is required");
+        }
+        dirPath = argv[1];
+        for(int i = 2; i < argc; i++){
+            string arg = argv[i];
+            if(arg == "--threshold" || arg == "-t"){
+                if (i + 1 >= argc){
+                    throw invalid_argument("Missing value for --threshold");
+                }
+                THRESHOLD = stoi(argv[++i]);
+                if(THRESHOLD < 1 || THRESHOLD > 100){
+                    throw out_of_range("Threshold must be between 1 and 100");
+                }
+            } else if(arg == "--exclude-problems" || arg == "-e"){
+                if (i + 1 >= argc) throw invalid_argument("Missing value for --exclude-problems");
+                string problems = argv[++i];
+                istringstream iss(problems);
+                string problem;
+                while (getline(iss, problem, ',')) {
+                    if (problem.empty()) throw invalid_argument("Invalid format in problem list");
+                    excludedProblems.push_back(problem);
+                }
+            } else if(arg == "--include-problems" || arg == "-i"){
+                if (i + 1 >= argc) throw invalid_argument("Missing value for --include-problems");
+                string problems = argv[++i];
+                istringstream iss(problems);
+                string problem;
+                while (getline(iss, problem, ',')) {
+                    if (problem.empty()) throw invalid_argument("Invalid format in problem list");
+                    includedProblems.push_back(problem);
+                }
+            } else if(arg == "--window-size" || arg == "-w"){
+                if (i + 1 >= argc){
+                    throw invalid_argument("Missing value for --window-size");
+                }
+                WINDOW_SIZE = stoi(argv[++i]);
+                if(WINDOW_SIZE < 1){
+                    throw out_of_range("Window size must be greater than 0");
+                }
+            } else if(arg == "--grams" || arg == "-g"){
+                if (i + 1 >= argc){
+                    throw invalid_argument("Missing value for --grams");
+                }
+                GRAMS = stoi(argv[++i]);
+                if(GRAMS < 1){
+                    throw out_of_range("Grams must be greater than 0");
+                }
+            } else if(arg == "--prime" || arg == "-p"){
+                if (i + 1 >= argc){
+                    throw invalid_argument("Missing value for --prime");
+                }
+                PRIME = stoi(argv[++i]);
+                if(PRIME < 1){
+                    throw out_of_range("Prime must be greater than 0");
+                }
+            } else if(arg == "--help" || arg == "-h"){
+                showUsage();
+                return 0;
+            } else{
+                throw invalid_argument("Unknown option: " + arg);
+            }
+        }
+    } catch (const exception& e) {
+        cerr << "Error: " << e.what() << "\n\n";
+        showUsage();
+        return 1;
     }
-    string dirPath = argv[1];
+
+    
+
 
     DIR* dir = opendir(dirPath.c_str());
     try {

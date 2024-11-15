@@ -61,6 +61,7 @@
     "*.tcc": "cpp",
     "iostream": "cpp",
     "typeindex": "cpp",
-    "typeinfo": "cpp"
+    "typeinfo": "cpp",
+    "stdexcept": "cpp"
   }
 }
