@@ -7,6 +7,7 @@ int THRESHOLD = 40;
 int WINDOW_SIZE = 5;
 int GRAMS = 3;
 int PRIME = 31;  
+int CODEBLOCK_SIZE = 30;
 
 double GetSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2);
 vector<long long> GetFingerPrints(vector<long long> hashs);
@@ -15,6 +16,10 @@ vector<string> Generate_n_grams(string code);
 void TextProcessing(string& code);
 std::vector<std::string> split(const std::string &str, char delimiter);
 void Compare();
+void exportCSV();
+void ExportHTML();
+pair<string,string> HighlightSimilarBlocks(const std::string &code1, const std::string &code2);
+
 
 
 struct submission{
@@ -22,11 +27,13 @@ struct submission{
     string username;
     string problem;
     string code;
+    string SubmissionId;
 
-    submission(string code, string verdict, string username, string problem){
+    submission(string SubmissionId, string verdict, string username, string problem, string code){
         this->verdict = verdict;
         this->username = username;
         this->problem = problem;
+        this->SubmissionId = SubmissionId;
         this->code = code;
     }
 };
@@ -193,16 +200,120 @@ void exportCSV(){
     file.close();
 }
 
+
+void ExportHTML() {
+    std::ofstream htmlFile("report.html");
+    htmlFile << "<!DOCTYPE html>\n<html>\n<head>\n";
+    htmlFile << "<style>\n";
+    htmlFile << "body { font-family: Arial, sans-serif; margin: 20px; }\n";
+    htmlFile << "h1 { text-align: center; }\n";
+    htmlFile << "h2 { color: #444; margin-top: 40px; }\n";
+    htmlFile << ".submission-table { width: 100%; border-collapse: collapse; margin: 20px 0; }\n";
+    htmlFile << ".submission-table td { vertical-align: top; padding: 10px; border: 1px solid #ddd; width: 50%; }\n";
+    htmlFile << ".header { font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }\n";
+    htmlFile << ".code { white-space: pre-wrap; font-family: monospace; background-color: #f9f9f9; padding: 10px; ";
+    htmlFile << "border-radius: 5px; word-wrap: break-word; width: 100%; box-sizing: border-box; }\n";
+    htmlFile << ".highlight { background-color: yellow; }\n";
+    htmlFile << "</style>\n";
+    htmlFile << "</head>\n<body>\n";
+    htmlFile << "<h1>Similar Submissions</h1>\n";
+
+    for (const auto &pair : similarSubmissions) {
+        const auto &sub1 = pair.first.first;
+        const auto &sub2 = pair.first.second;
+        double similarity = pair.second;
+
+        // Add similarity header
+        htmlFile << "<h2>Similarity: " << similarity << "%</h2>\n";
+
+        // Create table for side-by-side display
+        htmlFile << "<table class='submission-table'>\n";
+        htmlFile << "<tr>\n";
+
+        // Submission 1
+        htmlFile << "<td>\n";
+        htmlFile << "<div class='header'>Submission 1 (" << sub1.username << ")<br>Id: " << sub1.SubmissionId << "</div>\n";
+        htmlFile << "<div class='code'>" << HighlightSimilarBlocks(sub1.code, sub2.code).first << "</div>\n";
+        htmlFile << "</td>\n";
+
+        // Submission 2
+        htmlFile << "<td>\n";
+        htmlFile << "<div class='header'>Submission 2 (" << sub2.username << ")<br>Id: " << sub2.SubmissionId << "</div>\n";
+        htmlFile << "<div class='code'>" << HighlightSimilarBlocks(sub1.code, sub2.code).second << "</div>\n";
+        htmlFile << "</td>\n";
+
+        htmlFile << "</tr>\n";
+        htmlFile << "</table>\n";
+    }
+
+    htmlFile << "</body>\n</html>";
+    htmlFile.close();
+}
+
+
+
+
+pair<string,string> HighlightSimilarBlocks(const string &code1, const string &code2) {
+    vector<pair<int, int>> ranges1; 
+    vector<pair<int, int>> ranges2; 
+
+    for (int i = 0; i + CODEBLOCK_SIZE <= code1.size(); ++i) {
+        for (int j = 0; j + CODEBLOCK_SIZE <= code2.size(); ++j) {
+            if (code1.substr(i, CODEBLOCK_SIZE) == code2.substr(j, CODEBLOCK_SIZE)) {
+                int k = CODEBLOCK_SIZE;
+
+                while (i + k < code1.size() && j + k < code2.size() && 
+                       code1[i + k] == code2[j + k]) {
+                    ++k;
+                }
+
+                ranges1.push_back(make_pair(i, k));
+                ranges2.push_back(make_pair(j, k));
+
+                i += k - 1;
+                break;
+            }
+        }
+    }
+
+    auto applyHighlights = [](const string &code, const vector<pair<int, int>> &ranges) {
+        stringstream highlighted;
+        size_t idx = 0;
+
+        for (size_t r = 0; r < ranges.size(); ++r) {
+            int start = ranges[r].first;
+            int len = ranges[r].second;
+
+            highlighted << code.substr(idx, start - idx);
+
+            highlighted << "<span class='highlight'>" << code.substr(start, len) << "</span>";
+
+            idx = start + len;
+        }
+
+        highlighted << code.substr(idx);
+
+        return highlighted.str();
+    };
+
+    string highlightedCode1 = applyHighlights(code1, ranges1);
+    string highlightedCode2 = applyHighlights(code2, ranges2);
+
+    return make_pair(highlightedCode1, highlightedCode2);
+}
+
+
+
 void showUsage() {
     cout << "Usage: ./main <directory_path> [options]\n";
     cout << "Options:\n";
-    cout << "  --threshold, -t <value>    Set the threshold value for similarity (default: 40)\n";
+    cout << "  --threshold, -t <value>                           Set the threshold value for similarity (default: 40)\n";
     cout << "  --exclude-problems, -e <problem1,problem2,...>    Exclude problems from comparison\n"; 
     cout << "  --include-problems, -i <problem1,problem2,...>    Include only these problems in comparison\n";   
-    cout << "  --window-size, -w <value>    Set the window size for fingerprinting (default: 5)\n";
-    cout << "  --grams, -g <value>    Set the n-grams value for hashing (default: 3)\n";
-    cout << "  --prime, -p <value>    Set the prime value for hashing (default: 31)\n";
-    cout << "  --help, -h    Show this help message\n";
+    cout << "  --window-size, -w <value>                         Set the window size for fingerprinting (default: 5)\n";
+    cout << "  --grams, -g <value>                               Set the n-grams value for hashing (default: 3)\n";
+    cout << "  --prime, -p <value>                               Set the prime value for hashing (default: 31)\n";
+    cout << "  --help, -h                                        Show this help message\n";
 
 }
 
@@ -292,13 +403,21 @@ int main(int argc, char *argv[]) {
             if (entry->d_type == DT_REG) {
                 string filePath = dirPath + "/" + entry->d_name;
                 vector<string> temp = split(entry->d_name, '_');
-                submissions.push_back({temp[0], temp[1], temp[2], temp[3]});
                 shared_ptr<ifstream> file = make_shared<ifstream>(filePath);
                 if (!file->is_open()) {
                     cerr << "Failed to open the file " << filePath << '\n';
                     continue;
                 }
                 files.push_back(file);
+
+                string code((istreambuf_iterator<char>(*file)), istreambuf_iterator<char>());
+
+                // remove the spaces in the end of the file
+                while (code[code.size() - 1] == ' ' || code[code.size() - 1] == '\n') {
+                    code.pop_back();
+                }
+
+                submissions.push_back({temp[0], temp[1], temp[2], temp[3], code});
             }
         }
     } catch (const exception& e) {
@@ -308,7 +427,8 @@ int main(int argc, char *argv[]) {
     closedir(dir);
     try{
     Compare();
-    exportCSV();
+    // exportCSV();
+    ExportHTML();
     } catch(const exception& e){
         cout << "Error: " << e.what() << '\n';
     }
