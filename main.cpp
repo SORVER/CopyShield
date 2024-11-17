@@ -25,6 +25,8 @@ std::vector<std::string> split(const std::string &str, char delimiter);
 void Compare();
 void exportCSV();
 void ExportHTML();
+string escapeHTML(string str);
+void showUsage();
 
 
 
@@ -142,6 +144,7 @@ std::vector<std::string> split(const std::string &str, char delimiter) {
     return tokens;
 }
 
+
 void Compare() {
     for (int i = 0; i < files.size(); i++) {
         for (int j = i + 1; j < files.size(); j++) {
@@ -243,9 +246,9 @@ void ExportHTML() {
     htmlFile << "<title>Similar Submissions</title>\n";
     htmlFile << "<style>\n";
     htmlFile << "body { font-family: 'Arial', sans-serif; background: #f7f9fb; color: #333; margin: 0; padding: 0; }\n";
-    htmlFile << "header { background-color: #4e73df; color: white; padding: 20px; text-align: center; font-size: 2.5em; border-bottom: 4px solid #2e59d9; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }\n";
+    htmlFile << "header { background-color: #28a745; color: white; padding: 20px; text-align: center; font-size: 2.5em; border-bottom: 4px solid #218838; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }\n";
     htmlFile << "main { padding: 40px 20px; max-width: 1200px; margin: auto; background-color: white; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); border-radius: 10px; overflow: hidden; }\n";
-    htmlFile << "h2 { color: #4e73df; text-align: center; font-size: 2.2em; margin-bottom: 20px; text-transform: uppercase; }\n";
+    htmlFile << "h2 { color: #28a745; text-align: center; font-size: 2.2em; margin-bottom: 20px; text-transform: uppercase; }\n";
     htmlFile << "ul { list-style-type: none; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }\n";
     htmlFile << "li { background: #ffffff; border-radius: 15px; padding: 20px; width: 300px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; transition: transform 0.3s ease-in-out, background-color 0.3s ease; cursor: pointer; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); }\n";
     htmlFile << "li:hover { transform: translateY(-10px); background-color: #f1f3f7; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }\n";
@@ -290,14 +293,14 @@ void ExportHTML() {
         detailFile << "<title>Submission Pair Report</title>\n";
         detailFile << "<style>\n";
         detailFile << "body { font-family: 'Arial', sans-serif; background: #f7f9fb; color: #333; margin: 0; padding: 0; }\n";
-        detailFile << "header { background-color: #4e73df; color: white; padding: 20px; text-align: center; font-size: 2.5em; border-bottom: 4px solid #2e59d9; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }\n";
+        detailFile << "header { background-color: #28a745; color: white; padding: 20px; text-align: center; font-size: 2.5em; border-bottom: 4px solid #218838; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }\n";
         detailFile << "main { padding: 40px 20px; max-width: 1200px; margin: auto; background-color: white; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); border-radius: 10px; overflow: hidden; }\n";
-        detailFile << "h2 { color: #4e73df; text-align: center; font-size: 2.5em; margin-bottom: 20px; text-transform: uppercase; }\n";
+        detailFile << "h2 { color: #28a745; text-align: center; font-size: 2.5em; margin-bottom: 20px; text-transform: uppercase; }\n";
         detailFile << "table { width: 100%; border-collapse: collapse; margin-top: 20px; }\n";
         detailFile << "td { padding: 20px; border: 1px solid #ddd; text-align: left; background-color: #f9f9f9; }\n";
-        detailFile << "td:first-child { border-right: 2px solid #4e73df; }\n";
+        detailFile << "td:first-child { border-right: 2px solid #28a745; }\n";
         detailFile << ".code { font-family: 'Courier New', monospace; background-color: #f4f4f4; padding: 20px; border-radius: 5px; border: 1px solid #ddd; white-space: pre-wrap; word-wrap: break-word; color: #333; font-size: 1.1em; }\n";
-        detailFile << ".similarity { font-weight: bold; font-size: 1.6em; color: #28a745; margin-bottom: 30px; text-align: center; }\n";
+        detailFile << ".similarity { font-weight: bold; font-size: 1.6em; color: #218838; margin-bottom: 30px; text-align: center; }\n";
         detailFile << "@media (max-width: 768px) {\n";
         detailFile << "table { display: block; }\n";
         detailFile << "td { display: block; width: 100%; margin-bottom: 20px; }\n";
@@ -316,12 +319,17 @@ void ExportHTML() {
         detailFile << "<td>\n";
         detailFile << "<h3>Submission 1</h3>\n";
         detailFile << "<p><strong>SubmissionId:</strong> " << sub1.SubmissionId << "</p>\n";
+        // add name and problem
+        detailFile << "<p><strong>Username:</strong> " << sub1.username << "</p>\n";
+        detailFile << "<p><strong>Problem:</strong> " << sub1.problem << "</p>\n";
         detailFile << "<div class='code'>" << escapeHTML(sub1.code) << "</div>\n";
         detailFile << "</td>\n";
 
         detailFile << "<td>\n";
         detailFile << "<h3>Submission 2</h3>\n";
         detailFile << "<p><strong>SubmissionId:</strong> " << sub2.SubmissionId << "</p>\n";
+        detailFile << "<p><strong>Username:</strong> " << sub2.username << "</p>\n";
+        detailFile << "<p><strong>Problem:</strong> " << sub2.problem << "</p>\n";
         detailFile << "<div class='code'>" << escapeHTML(sub2.code) << "</div>\n";
         detailFile << "</td>\n";
 
@@ -333,7 +341,6 @@ void ExportHTML() {
     htmlFile << "</main>\n</body>\n</html>";
     htmlFile.close();
 }
-
 
 
 void showUsage() {
