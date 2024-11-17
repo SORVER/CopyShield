@@ -154,6 +154,7 @@ void Compare() {
             // files[j]->clear();
             // files[j]->seekg(0, ios::beg);
 
+
             code1 = submissions[i].code;
             code2 = submissions[j].code;
 
@@ -205,6 +206,21 @@ void exportCSV(){
     file.close();
 }
 
+string escapeHTML(string str) {
+    string newStr;
+    for (char c : str) {
+        if (c == '<') {
+            newStr += "&lt;";
+        } else if (c == '>') {
+            newStr += "&gt;";
+        } else if (c == '&') {
+            newStr += "&amp;";
+        } else {
+            newStr += c;
+        }
+    }
+    return newStr;   
+}
 
 void ExportHTML() {
     std::ofstream htmlFile("report.html");
@@ -246,11 +262,15 @@ void ExportHTML() {
         htmlFile << "<table class='submission-table'>\n";
         htmlFile << "<tr>\n";
 
+        if(sub1.SubmissionId == "55639301"){
+            cout << sub1.code << '\n';
+        }
+
         // Submission 1
         htmlFile << "<td>\n";
         htmlFile << "<div class='header'>Submission 1 (" << sub1.username << ")<br>Id: " << sub1.SubmissionId << "</div>\n";
         htmlFile << "<div class='code'>\n";
-        htmlFile << sub1.code;
+        htmlFile << escapeHTML(sub1.code);
         htmlFile << "</div>\n";
         htmlFile << "</td>\n";
 
@@ -258,7 +278,7 @@ void ExportHTML() {
         htmlFile << "<td>\n";
         htmlFile << "<div class='header'>Submission 2 (" << sub2.username << ")<br>Id: " << sub2.SubmissionId << "</div>\n";
         htmlFile << "<div class='code'>\n";
-        htmlFile << sub2.code;
+        htmlFile << escapeHTML(sub2.code);
         htmlFile << "</div>\n";
         htmlFile << "</td>\n";
         htmlFile << "</tr>\n";
