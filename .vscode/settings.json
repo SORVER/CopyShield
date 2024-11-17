@@ -62,6 +62,10 @@
     "iostream": "cpp",
     "typeindex": "cpp",
     "typeinfo": "cpp",
-    "stdexcept": "cpp"
+    "stdexcept": "cpp",
+    "deque": "cpp",
+    "string": "cpp",
+    "vector": "cpp",
+    "array": "cpp"
   }
 }

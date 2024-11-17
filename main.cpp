@@ -7,7 +7,7 @@ int THRESHOLD = 40;
 int WINDOW_SIZE = 5;
 int GRAMS = 3;
 int PRIME = 31;  
-int CODEBLOCK_SIZE = 30;
+int CODEBLOCK_SIZE = 10;
 
 double GetSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2);
 vector<long long> GetFingerPrints(vector<long long> hashs);
@@ -18,7 +18,6 @@ std::vector<std::string> split(const std::string &str, char delimiter);
 void Compare();
 void exportCSV();
 void ExportHTML();
-pair<string,string> HighlightSimilarBlocks(const std::string &code1, const std::string &code2);
 
 
 
@@ -43,6 +42,7 @@ vector<submission> submissions;
 vector<pair<pair<submission, submission>, double>> similarSubmissions;
 vector<string> excludedProblems;
 vector<string> includedProblems;
+
 
 double GetSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2) {  // Jaccard Similarity
     set<long long> intersection;
@@ -136,7 +136,6 @@ std::vector<std::string> split(const std::string &str, char delimiter) {
 }
 
 void Compare() {
-    int count = 0;
     for (int i = 0; i < files.size(); i++) {
         for (int j = i + 1; j < files.size(); j++) {
             string code1, code2;
@@ -147,13 +146,17 @@ void Compare() {
             if(find(excludedProblems.begin(), excludedProblems.end(), submissions[i].problem) != excludedProblems.end()) continue;
             if(includedProblems.size() > 0 && find(includedProblems.begin(), includedProblems.end(), submissions[i].problem) == includedProblems.end()) continue;
 
-            getline(*files[i], code1, '\0');
-            files[i]->clear();               
-            files[i]->seekg(0, ios::beg);     
+            // getline(*files[i], code1, '\0');
+            // files[i]->clear();               
+            // files[i]->seekg(0, ios::beg);     
             
-            getline(*files[j], code2, '\0');
-            files[j]->clear();
-            files[j]->seekg(0, ios::beg);
+            // getline(*files[j], code2, '\0');
+            // files[j]->clear();
+            // files[j]->seekg(0, ios::beg);
+
+            code1 = submissions[i].code;
+            code2 = submissions[j].code;
+
 
             if (code1.empty() || code2.empty()) {
                 continue;
@@ -175,6 +178,8 @@ void Compare() {
 
 
             if (similarity >= THRESHOLD && submissions[i].verdict == "AC" && submissions[j].verdict == "AC") {
+
+
                 similarSubmissions.push_back({{submissions[i], submissions[j]}, similarity});
             }
 
@@ -195,7 +200,7 @@ void exportCSV(){
     ofstream file("result.csv");
     file << "Username1, Username2, Problem, CodeId1, CodeId2, Similarity\n";
     for(auto i : similarSubmissions){
-        file << i.first.first.username << "," << i.first.second.username << "," << i.first.first.problem << "," << i.first.first.code << "," << i.first.second.code << "," << i.second << '\n';
+        file << i.first.first.username << "," << i.first.second.username << "," << i.first.first.problem << "," << i.first.first.SubmissionId << "," << i.first.second.SubmissionId << "," << i.second << '\n';
     }
     file.close();
 }
@@ -204,19 +209,30 @@ void exportCSV(){
 void ExportHTML() {
     std::ofstream htmlFile("report.html");
     htmlFile << "<!DOCTYPE html>\n<html>\n<head>\n";
+    htmlFile << "<meta charset='UTF-8'>\n";
+    htmlFile << "<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n";
+    htmlFile << "<title>Similar Submissions</title>\n";
     htmlFile << "<style>\n";
-    htmlFile << "body { font-family: Arial, sans-serif; margin: 20px; }\n";
-    htmlFile << "h1 { text-align: center; }\n";
-    htmlFile << "h2 { color: #444; margin-top: 40px; }\n";
-    htmlFile << ".submission-table { width: 100%; border-collapse: collapse; margin: 20px 0; }\n";
-    htmlFile << ".submission-table td { vertical-align: top; padding: 10px; border: 1px solid #ddd; width: 50%; }\n";
-    htmlFile << ".header { font-size: 1.1em; font-weight: bold; margin-bottom: 10px; }\n";
-    htmlFile << ".code { white-space: pre-wrap; font-family: monospace; background-color: #f9f9f9; padding: 10px; ";
-    htmlFile << "border-radius: 5px; word-wrap: break-word; width: 100%; box-sizing: border-box; }\n";
-    htmlFile << ".highlight { background-color: yellow; }\n";
+    htmlFile << "body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 0; }\n";
+    htmlFile << "header { background-color: #4CAF50; color: white; padding: 20px 0; text-align: center; font-size: 1.5em; }\n";
+    htmlFile << "main { padding: 20px; max-width: 1200px; margin: auto; }\n";
+    htmlFile << "h2 { color: #555; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-top: 40px; }\n";
+    htmlFile << ".submission-table { width: 100%; border-collapse: collapse; margin: 30px 0; background: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 8px; overflow: hidden; }\n";
+    htmlFile << ".submission-table td { vertical-align: top; padding: 20px; border: 1px solid #ddd; }\n";
+    htmlFile << ".submission-table td:first-child { border-right: 2px solid #4CAF50; }\n";
+    htmlFile << ".header { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; color: #4CAF50; }\n";
+    htmlFile << ".code { white-space: pre-wrap; font-family: 'Courier New', monospace; background-color: #2e3b4e; color: #f8f8f2; ";
+    htmlFile << "padding: 15px; border-radius: 5px; border: 1px solid #444; word-wrap: break-word; width: 100%; box-sizing: border-box; overflow-x: auto; }\n";
+    htmlFile << ".highlight { background-color: #ffd54f; font-weight: bold; }\n";
+    htmlFile << "@media (max-width: 768px) {\n";
+    htmlFile << ".submission-table { display: block; }\n";
+    htmlFile << ".submission-table td { display: block; width: 100%; border: none; margin-bottom: 20px; }\n";
+    htmlFile << ".submission-table td:first-child { border-right: none; }\n";
+    htmlFile << "}\n";
     htmlFile << "</style>\n";
     htmlFile << "</head>\n<body>\n";
-    htmlFile << "<h1>Similar Submissions</h1>\n";
+    htmlFile << "<header>Similar Submissions</header>\n";
+    htmlFile << "<main>\n";
 
     for (const auto &pair : similarSubmissions) {
         const auto &sub1 = pair.first.first;
@@ -233,74 +249,27 @@ void ExportHTML() {
         // Submission 1
         htmlFile << "<td>\n";
         htmlFile << "<div class='header'>Submission 1 (" << sub1.username << ")<br>Id: " << sub1.SubmissionId << "</div>\n";
-        htmlFile << "<div class='code'>" << HighlightSimilarBlocks(sub1.code, sub2.code).first << "</div>\n";
+        htmlFile << "<div class='code'>\n";
+        htmlFile << sub1.code;
+        htmlFile << "</div>\n";
         htmlFile << "</td>\n";
 
         // Submission 2
         htmlFile << "<td>\n";
         htmlFile << "<div class='header'>Submission 2 (" << sub2.username << ")<br>Id: " << sub2.SubmissionId << "</div>\n";
-        htmlFile << "<div class='code'>" << HighlightSimilarBlocks(sub1.code, sub2.code).second << "</div>\n";
+        htmlFile << "<div class='code'>\n";
+        htmlFile << sub2.code;
+        htmlFile << "</div>\n";
         htmlFile << "</td>\n";
-
         htmlFile << "</tr>\n";
         htmlFile << "</table>\n";
     }
 
-    htmlFile << "</body>\n</html>";
+    htmlFile << "</main>\n</body>\n</html>";
     htmlFile.close();
 }
 
 
-
-
-pair<string,string> HighlightSimilarBlocks(const string &code1, const string &code2) {
-    vector<pair<int, int>> ranges1; 
-    vector<pair<int, int>> ranges2; 
-
-    for (int i = 0; i + CODEBLOCK_SIZE <= code1.size(); ++i) {
-        for (int j = 0; j + CODEBLOCK_SIZE <= code2.size(); ++j) {
-            if (code1.substr(i, CODEBLOCK_SIZE) == code2.substr(j, CODEBLOCK_SIZE)) {
-                int k = CODEBLOCK_SIZE;
-
-                while (i + k < code1.size() && j + k < code2.size() && 
-                       code1[i + k] == code2[j + k]) {
-                    ++k;
-                }
-
-                ranges1.push_back(make_pair(i, k));
-                ranges2.push_back(make_pair(j, k));
-
-                i += k - 1;
-                break;
-            }
-        }
-    }
-
-    auto applyHighlights = [](const string &code, const vector<pair<int, int>> &ranges) {
-        stringstream highlighted;
-        size_t idx = 0;
-
-        for (size_t r = 0; r < ranges.size(); ++r) {
-            int start = ranges[r].first;
-            int len = ranges[r].second;
-
-            highlighted << code.substr(idx, start - idx);
-
-            highlighted << "<span class='highlight'>" << code.substr(start, len) << "</span>";
-
-            idx = start + len;
-        }
-
-        highlighted << code.substr(idx);
-
-        return highlighted.str();
-    };
-
-    string highlightedCode1 = applyHighlights(code1, ranges1);
-    string highlightedCode2 = applyHighlights(code2, ranges2);
-
-    return make_pair(highlightedCode1, highlightedCode2);
-}
 
 
 
@@ -427,7 +396,7 @@ int main(int argc, char *argv[]) {
     closedir(dir);
     try{
     Compare();
-    // exportCSV();
+    exportCSV();
     ExportHTML();
     } catch(const exception& e){
         cout << "Error: " << e.what() << '\n';
