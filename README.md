@@ -4,6 +4,24 @@
 
 CopyShield is a simple Plagiarism Detection tool, which reads collection of documents and checks for similarity between them. It  can be used to detect plagiarism in documents or source codes.
 
+## Report Generation
+
+### CSV Report
+
+The program generates a CSV report containing the following columns:
+
+1. **user1**: Name of the first user
+2. **user2**: Name of the second user
+3. **problem**: Name of the problem
+4. **similarity**: Similarity between the two files
+
+### HTML Report
+
+The program generates an HTML report containing the code snippets of the all pairs of files that are flagged as likely duplicates.
+
+![HTML report](https://github.com/saifadin1/CopyShield/blob/main/image.png)
+
+
 ## How it works ?
 
 1. **Text Preprocessing**: The code from each file is preprocessed to remove comments and whitespace, and all characters are converted to lowercase.
