@@ -90,7 +90,11 @@ g++ -std=c++17 main.cpp -o main
 .\main .\problems -t 70 -w 5 -g 3 -p 101 -e problem1,problem2
 ```
 
+## TODO
 
+- [ ] Add support for highlighting the similer blocks in the HTML report
+- [ ] Add better hashing function
+- [ ] Add more efficient similarity calculation algorithm
 
 
 
