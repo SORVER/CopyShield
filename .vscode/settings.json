@@ -66,6 +66,8 @@
     "deque": "cpp",
     "string": "cpp",
     "vector": "cpp",
-    "array": "cpp"
+    "array": "cpp",
+    "iosfwd": "cpp",
+    "fstream": "cpp"
   }
 }

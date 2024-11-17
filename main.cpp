@@ -3,6 +3,13 @@
 #include <fstream>
 using namespace std;
 
+#ifdef _WIN32
+#define CREATE_DIR(name) _mkdir(name)
+#else
+#define CREATE_DIR(name) mkdir(name, 0777)
+#endif
+
+
 int THRESHOLD = 40;
 int WINDOW_SIZE = 5;
 int GRAMS = 3;
@@ -222,72 +229,111 @@ string escapeHTML(string str) {
     return newStr;   
 }
 
+
+
 void ExportHTML() {
-    std::ofstream htmlFile("report.html");
+    // Create the 'reports' folder manually (cross-platform support)
+    CREATE_DIR("reports");
+
+    // Create index.html file in the root directory
+    std::ofstream htmlFile("index.html");
     htmlFile << "<!DOCTYPE html>\n<html>\n<head>\n";
     htmlFile << "<meta charset='UTF-8'>\n";
     htmlFile << "<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n";
     htmlFile << "<title>Similar Submissions</title>\n";
     htmlFile << "<style>\n";
-    htmlFile << "body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 0; }\n";
-    htmlFile << "header { background-color: #4CAF50; color: white; padding: 20px 0; text-align: center; font-size: 1.5em; }\n";
-    htmlFile << "main { padding: 20px; max-width: 1200px; margin: auto; }\n";
-    htmlFile << "h2 { color: #555; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; margin-top: 40px; }\n";
-    htmlFile << ".submission-table { width: 100%; border-collapse: collapse; margin: 30px 0; background: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border-radius: 8px; overflow: hidden; }\n";
-    htmlFile << ".submission-table td { vertical-align: top; padding: 20px; border: 1px solid #ddd; }\n";
-    htmlFile << ".submission-table td:first-child { border-right: 2px solid #4CAF50; }\n";
-    htmlFile << ".header { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; color: #4CAF50; }\n";
-    htmlFile << ".code { white-space: pre-wrap; font-family: 'Courier New', monospace; background-color: #2e3b4e; color: #f8f8f2; ";
-    htmlFile << "padding: 15px; border-radius: 5px; border: 1px solid #444; word-wrap: break-word; width: 100%; box-sizing: border-box; overflow-x: auto; }\n";
-    htmlFile << ".highlight { background-color: #ffd54f; font-weight: bold; }\n";
+    htmlFile << "body { font-family: 'Arial', sans-serif; background: #f7f9fb; color: #333; margin: 0; padding: 0; }\n";
+    htmlFile << "header { background-color: #4e73df; color: white; padding: 20px; text-align: center; font-size: 2.5em; border-bottom: 4px solid #2e59d9; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }\n";
+    htmlFile << "main { padding: 40px 20px; max-width: 1200px; margin: auto; background-color: white; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); border-radius: 10px; overflow: hidden; }\n";
+    htmlFile << "h2 { color: #4e73df; text-align: center; font-size: 2.2em; margin-bottom: 20px; text-transform: uppercase; }\n";
+    htmlFile << "ul { list-style-type: none; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }\n";
+    htmlFile << "li { background: #ffffff; border-radius: 15px; padding: 20px; width: 300px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; transition: transform 0.3s ease-in-out, background-color 0.3s ease; cursor: pointer; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); }\n";
+    htmlFile << "li:hover { transform: translateY(-10px); background-color: #f1f3f7; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }\n";
+    htmlFile << "button { background-color: #28a745; color: white; border: none; padding: 12px 25px; border-radius: 25px; font-size: 1.1em; transition: background-color 0.3s ease, transform 0.2s ease; cursor: pointer; font-weight: 600; }\n";
+    htmlFile << "button:hover { background-color: #218838; transform: scale(1.05); }\n";
+    htmlFile << ".similarity { font-weight: bold; font-size: 1.4em; color: #17a2b8; }\n";
     htmlFile << "@media (max-width: 768px) {\n";
-    htmlFile << ".submission-table { display: block; }\n";
-    htmlFile << ".submission-table td { display: block; width: 100%; border: none; margin-bottom: 20px; }\n";
-    htmlFile << ".submission-table td:first-child { border-right: none; }\n";
+    htmlFile << "li { width: 100%; max-width: 400px; }\n";
     htmlFile << "}\n";
     htmlFile << "</style>\n";
     htmlFile << "</head>\n<body>\n";
     htmlFile << "<header>Similar Submissions</header>\n";
     htmlFile << "<main>\n";
 
+    htmlFile << "<h2>All Similar Pairs</h2>\n";
+    htmlFile << "<ul>\n";
     for (const auto &pair : similarSubmissions) {
         const auto &sub1 = pair.first.first;
         const auto &sub2 = pair.first.second;
         double similarity = pair.second;
 
-        // Add similarity header
-        htmlFile << "<h2>Similarity: " << similarity << "%</h2>\n";
+        // List item with similarity percentage and button
+        htmlFile << "<li>\n";
+        htmlFile << "<span class='similarity'>Similarity: " << similarity << "%</span>\n";
+        htmlFile << "<button onclick=\"window.location.href='reports/report_" << sub1.SubmissionId << "_" << sub2.SubmissionId << ".html';\">View Report</button>\n";
+        htmlFile << "</li>\n";
+    }
+    htmlFile << "</ul>\n";
 
-        // Create table for side-by-side display
-        htmlFile << "<table class='submission-table'>\n";
-        htmlFile << "<tr>\n";
+    // Generate detailed reports for each pair
+    for (const auto &pair : similarSubmissions) {
+        const auto &sub1 = pair.first.first;
+        const auto &sub2 = pair.first.second;
+        double similarity = pair.second;
 
-        if(sub1.SubmissionId == "55639301"){
-            cout << sub1.code << '\n';
-        }
+        // Create individual detailed report
+        std::ofstream detailFile("reports/report_" + sub1.SubmissionId + "_" + sub2.SubmissionId + ".html");
 
-        // Submission 1
-        htmlFile << "<td>\n";
-        htmlFile << "<div class='header'>Submission 1 (" << sub1.username << ")<br>Id: " << sub1.SubmissionId << "</div>\n";
-        htmlFile << "<div class='code'>\n";
-        htmlFile << escapeHTML(sub1.code);
-        htmlFile << "</div>\n";
-        htmlFile << "</td>\n";
+        detailFile << "<!DOCTYPE html>\n<html>\n<head>\n";
+        detailFile << "<meta charset='UTF-8'>\n";
+        detailFile << "<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n";
+        detailFile << "<title>Submission Pair Report</title>\n";
+        detailFile << "<style>\n";
+        detailFile << "body { font-family: 'Arial', sans-serif; background: #f7f9fb; color: #333; margin: 0; padding: 0; }\n";
+        detailFile << "header { background-color: #4e73df; color: white; padding: 20px; text-align: center; font-size: 2.5em; border-bottom: 4px solid #2e59d9; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }\n";
+        detailFile << "main { padding: 40px 20px; max-width: 1200px; margin: auto; background-color: white; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); border-radius: 10px; overflow: hidden; }\n";
+        detailFile << "h2 { color: #4e73df; text-align: center; font-size: 2.5em; margin-bottom: 20px; text-transform: uppercase; }\n";
+        detailFile << "table { width: 100%; border-collapse: collapse; margin-top: 20px; }\n";
+        detailFile << "td { padding: 20px; border: 1px solid #ddd; text-align: left; background-color: #f9f9f9; }\n";
+        detailFile << "td:first-child { border-right: 2px solid #4e73df; }\n";
+        detailFile << ".code { font-family: 'Courier New', monospace; background-color: #f4f4f4; padding: 20px; border-radius: 5px; border: 1px solid #ddd; white-space: pre-wrap; word-wrap: break-word; color: #333; font-size: 1.1em; }\n";
+        detailFile << ".similarity { font-weight: bold; font-size: 1.6em; color: #28a745; margin-bottom: 30px; text-align: center; }\n";
+        detailFile << "@media (max-width: 768px) {\n";
+        detailFile << "table { display: block; }\n";
+        detailFile << "td { display: block; width: 100%; margin-bottom: 20px; }\n";
+        detailFile << "td:first-child { border-right: none; }\n";
+        detailFile << "}\n";
+        detailFile << "</style>\n";
+        detailFile << "</head>\n<body>\n";
+        detailFile << "<header>Detailed Report</header>\n";
+        detailFile << "<main>\n";
+        detailFile << "<h2>Similarity: " << similarity << "%</h2>\n";
 
-        // Submission 2
-        htmlFile << "<td>\n";
-        htmlFile << "<div class='header'>Submission 2 (" << sub2.username << ")<br>Id: " << sub2.SubmissionId << "</div>\n";
-        htmlFile << "<div class='code'>\n";
-        htmlFile << escapeHTML(sub2.code);
-        htmlFile << "</div>\n";
-        htmlFile << "</td>\n";
-        htmlFile << "</tr>\n";
-        htmlFile << "</table>\n";
+        // Create table for side-by-side code comparison
+        detailFile << "<table>\n";
+        detailFile << "<tr>\n";
+
+        detailFile << "<td>\n";
+        detailFile << "<h3>Submission 1</h3>\n";
+        detailFile << "<p><strong>SubmissionId:</strong> " << sub1.SubmissionId << "</p>\n";
+        detailFile << "<div class='code'>" << escapeHTML(sub1.code) << "</div>\n";
+        detailFile << "</td>\n";
+
+        detailFile << "<td>\n";
+        detailFile << "<h3>Submission 2</h3>\n";
+        detailFile << "<p><strong>SubmissionId:</strong> " << sub2.SubmissionId << "</p>\n";
+        detailFile << "<div class='code'>" << escapeHTML(sub2.code) << "</div>\n";
+        detailFile << "</td>\n";
+
+        detailFile << "</tr>\n";
+        detailFile << "</table>\n";
+        detailFile << "</main>\n</body>\n</html>";
     }
 
     htmlFile << "</main>\n</body>\n</html>";
     htmlFile.close();
 }
+
 
 
 void showUsage() {
