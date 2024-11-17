@@ -270,9 +270,6 @@ void ExportHTML() {
 }
 
 
-
-
-
 void showUsage() {
     cout << "Usage: ./main <directory_path> [options]\n";
     cout << "Options:\n";
