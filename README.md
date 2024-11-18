@@ -22,7 +22,9 @@ The report generation feature creates three separate files with detailed informa
 
 The program generates an HTML report containing the code snippets of the all pairs of files that are flagged as likely duplicates.
 
-![HTML report](https://github.com/saifadin1/CopyShield/blob/main/image.png)
+![HTML report](https://github.com/saifadin1/CopyShield/blob/main/assets/image2.png)
+
+![HTML report](https://github.com/saifadin1/CopyShield/blob/main/assets/image.png)
 
 
 ## How it works ?
