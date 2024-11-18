@@ -79,6 +79,11 @@ g++ -std=c++17 main.cpp -o main
     --include-problems, -i <problem1,problem2,...>
     ```
 
+* Include only specific users
+    ```bash
+    --include-users, -u <user1,user2,...>
+    ```
+
 * Display the help message showing the available options and their descriptions
     ```bash
     --help, -h
