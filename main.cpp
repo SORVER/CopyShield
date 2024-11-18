@@ -27,6 +27,7 @@ std::vector<std::string> split(const std::string &str, char delimiter);
 void Compare();
 void exportCSV();
 void ExportHTML();
+void ExportParticipantsCSV();  // contains handle and int for number of occurences
 string escapeHTML(string str);
 void showUsage();
 
@@ -205,14 +206,63 @@ void Compare() {
     });
 }
 
-void exportCSV(){
+void ExportParticipantsCSV() {
     if(similarSubmissions.size() == 0){
-        ofstream file("result.csv");
+        ofstream file("reports/participants.csv");
         file << "No Similar Submissions Found\n";
         file.close();
         return;
     }
-    ofstream file("result.csv");
+    map<string, int> participants;
+    ofstream file("reports/participants.csv");
+    file << "Handle, # of Occurences\n";
+
+
+    // every range of percentage similarity has a different weight 
+    // 90% similarity has the highest weight => 9999999
+    // 70% similarity has the fourth highest weight => 10000
+    // 40% similarity has the lowest weight => 250
+
+
+    for (const auto &pair : similarSubmissions) {
+        if(pair.second >= 90) {
+            participants[pair.first.second.username] = 9999999;
+            participants[pair.first.first.username] = 9999999;
+        } else if (pair.second >= 70 && pair.second < 90){
+            participants[pair.first.second.username] += 10000;
+            participants[pair.first.first.username] += 10000;
+        } else if (pair.second >= 50 && pair.second < 70){
+            participants[pair.first.second.username] += 1000;
+            participants[pair.first.first.username] += 1000;
+        } else if (pair.second >= 40 && pair.second < 50){
+            participants[pair.first.second.username] += 250;
+            participants[pair.first.first.username] += 250;
+        } else {
+            participants[pair.first.second.username] += 100;
+            participants[pair.first.first.username] += 100;
+        }
+    }
+
+    vector<pair<string, int>> participantsVec(participants.begin(), participants.end());
+    sort(participantsVec.begin(), participantsVec.end(), [](pair<string, int> a, pair<string, int> b){
+        return a.second > b.second;
+    });
+
+    for(auto i : participantsVec){
+        file << i.first << "," << i.second << '\n';
+    }
+
+    file.close();
+}
+
+void exportCSV(){
+    if(similarSubmissions.size() == 0){
+        ofstream file("reports/result.csv");
+        file << "No Similar Submissions Found\n";
+        file.close();
+        return;
+    }
+    ofstream file("reports/result.csv");
     file << "Username1, Username2, Problem, CodeId1, CodeId2, Similarity\n";
     for(auto i : similarSubmissions){
         file << i.first.first.username << "," << i.first.second.username << "," << i.first.first.problem << "," << i.first.first.SubmissionId << "," << i.first.second.SubmissionId << "," << i.second << '\n';
@@ -240,10 +290,12 @@ string escapeHTML(string str) {
 
 void ExportHTML() {
 
-    CREATE_DIR("reports");
+    CREATE_DIR("reports/HTMLreports");
+
+
 
     // Create index.html file in the root directory
-    std::ofstream htmlFile("index.html");
+    std::ofstream htmlFile("reports/index.html");
     htmlFile << "<!DOCTYPE html>\n<html>\n<head>\n";
     htmlFile << "<meta charset='UTF-8'>\n";
     htmlFile << "<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n";
@@ -277,7 +329,7 @@ void ExportHTML() {
         // List item with similarity percentage and button
         htmlFile << "<li>\n";
         htmlFile << "<span class='similarity'>Similarity: " << similarity << "%</span>\n";
-        htmlFile << "<button onclick=\"window.location.href='reports/report_" << sub1.SubmissionId << "_" << sub2.SubmissionId << ".html';\">View Report</button>\n";
+        htmlFile << "<button onclick=\"window.location.href='HTMLreports/report_" << sub1.SubmissionId << "_" << sub2.SubmissionId << ".html';\">View Report</button>\n";
         htmlFile << "</li>\n";
     }
     htmlFile << "</ul>\n";
@@ -289,7 +341,7 @@ void ExportHTML() {
         double similarity = pair.second;
 
         // Create individual detailed report
-        std::ofstream detailFile("reports/report_" + sub1.SubmissionId + "_" + sub2.SubmissionId + ".html");
+        std::ofstream detailFile("reports/HTMLreports/report_" + sub1.SubmissionId + "_" + sub2.SubmissionId + ".html");
 
         detailFile << "<!DOCTYPE html>\n<html>\n<head>\n";
         detailFile << "<meta charset='UTF-8'>\n";
@@ -479,10 +531,16 @@ int main(int argc, char *argv[]) {
     }
 
     closedir(dir);
+
+
     try{
-    Compare();
-    exportCSV();
-    ExportHTML();
+        REMOVE_DIR("reports");
+        CREATE_DIR("reports");
+
+        Compare();
+        exportCSV();
+        ExportHTML();
+        ExportParticipantsCSV();
     } catch(const exception& e){
         cout << "Error: " << e.what() << '\n';
     }
