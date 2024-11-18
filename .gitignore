@@ -30,6 +30,8 @@
 *.exe
 *.out
 *.app
+*.html
+*.csv
 
 files/
 files2/
