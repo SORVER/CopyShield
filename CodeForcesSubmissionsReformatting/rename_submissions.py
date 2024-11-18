@@ -2,7 +2,7 @@ import os
 import json
 
 def rename_files():
-    submissions_folder = 'submisions'
+    submissions_folder = 'submissions'
 
     with open('submissions.json') as f:
         data = json.load(f)
