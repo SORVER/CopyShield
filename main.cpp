@@ -5,8 +5,10 @@ using namespace std;
 
 #ifdef _WIN32
 #define CREATE_DIR(name) _mkdir(name)
+#define REMOVE_DIR(name) _rmdir(name)
 #else
 #define CREATE_DIR(name) mkdir(name, 0777)
+#define REMOVE_DIR(name) rmdir(name)
 #endif
 
 
@@ -51,6 +53,7 @@ vector<submission> submissions;
 vector<pair<pair<submission, submission>, double>> similarSubmissions;
 vector<string> excludedProblems;
 vector<string> includedProblems;
+vector<string> includedUsers;
 
 
 double GetSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2) {  // Jaccard Similarity
@@ -155,6 +158,7 @@ void Compare() {
             if(submissions[i].problem != submissions[j].problem) continue;
             if(find(excludedProblems.begin(), excludedProblems.end(), submissions[i].problem) != excludedProblems.end()) continue;
             if(includedProblems.size() > 0 && find(includedProblems.begin(), includedProblems.end(), submissions[i].problem) == includedProblems.end()) continue;
+            if(includedUsers.size() > 0 && (find(includedUsers.begin(), includedUsers.end(), submissions[i].username) == includedUsers.end() && find(includedUsers.begin(), includedUsers.end(), submissions[j].username) == includedUsers.end())) continue;
 
             // getline(*files[i], code1, '\0');
             // files[i]->clear();               
@@ -235,7 +239,7 @@ string escapeHTML(string str) {
 
 
 void ExportHTML() {
-    // Create the 'reports' folder manually (cross-platform support)
+
     CREATE_DIR("reports");
 
     // Create index.html file in the root directory
@@ -349,6 +353,7 @@ void showUsage() {
     cout << "  --threshold, -t <value>                           Set the threshold value for similarity (default: 40)\n";
     cout << "  --exclude-problems, -e <problem1,problem2,...>    Exclude problems from comparison\n"; 
     cout << "  --include-problems, -i <problem1,problem2,...>    Include only these problems in comparison\n";   
+    cout << "  --include-users, -u <user1,user2,...>             Include only these users in comparison\n";
     cout << "  --window-size, -w <value>                         Set the window size for fingerprinting (default: 5)\n";
     cout << "  --grams, -g <value>                               Set the n-grams value for hashing (default: 3)\n";
     cout << "  --prime, -p <value>                               Set the prime value for hashing (default: 31)\n";
@@ -357,6 +362,7 @@ void showUsage() {
 }
 
 int main(int argc, char *argv[]) {
+
     string dirPath;
     try{
         if(argc < 2) {
@@ -390,6 +396,15 @@ int main(int argc, char *argv[]) {
                 while (getline(iss, problem, ',')) {
                     if (problem.empty()) throw invalid_argument("Invalid format in problem list");
                     includedProblems.push_back(problem);
+                }
+            } else if(arg == "--include-users" || arg == "-u"){
+                if (i + 1 >= argc) throw invalid_argument("Missing value for --include-users");
+                string users = argv[++i];
+                istringstream iss(users);
+                string user;
+                while (getline(iss, user, ',')) {
+                    if (user.empty()) throw invalid_argument("Invalid format in user list");
+                    includedUsers.push_back(user);
                 }
             } else if(arg == "--window-size" || arg == "-w"){
                 if (i + 1 >= argc){
