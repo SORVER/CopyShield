@@ -28,6 +28,7 @@ void Compare();
 void exportCSV();
 void ExportHTML();
 void ExportParticipantsCSV();  // contains handle and int for number of occurences
+void ExportPairsOccurences();  // contains username1, username2, # of occurences of the pair
 string escapeHTML(string str);
 void showUsage();
 
@@ -205,6 +206,48 @@ void Compare() {
         return a.second > b.second;
     });
 }
+
+
+void ExportPairsOccurences() {
+    if(similarSubmissions.size() == 0){
+        ofstream file("reports/pairs.csv");
+        file << "No Similar Submissions Found\n";
+        file.close();
+        return;
+    }
+    map<pair<string, string>, vector<int>> pairs;
+    ofstream file("reports/pairs.csv");
+    file << "Username1, Username2, Occurences\n";
+    for(auto i : similarSubmissions){
+        pairs[{i.first.first.username, i.first.second.username}].push_back(i.second);
+    }
+
+    vector<pair<pair<string, string>, vector<int>>> pairsVec(pairs.begin(), pairs.end());
+    sort(pairsVec.begin(), pairsVec.end(), [](pair<pair<string, string>, vector<int>> a, pair<pair<string, string>, vector<int>> b){
+        if(a.second.size() == b.second.size()){
+            int sumA = 0, sumB = 0;
+            for(auto i : a.second){
+                sumA += i;
+            }
+            for(auto i : b.second){
+                sumB += i;
+            }
+            return sumA > sumB;
+        }
+        return a.second.size() > b.second.size();
+    });
+
+    for(auto i : pairsVec){
+        file << i.first.first << "," << i.first.second << "," ;
+        for(auto j : i.second){
+            file << j << " ";
+        }
+        file << '\n';
+    }
+
+    file.close();
+}
+
 
 void ExportParticipantsCSV() {
     if(similarSubmissions.size() == 0){
@@ -541,6 +584,7 @@ int main(int argc, char *argv[]) {
         exportCSV();
         ExportHTML();
         ExportParticipantsCSV();
+        ExportPairsOccurences();
     } catch(const exception& e){
         cout << "Error: " << e.what() << '\n';
     }
