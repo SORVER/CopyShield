@@ -1,19 +1,22 @@
 # CopyShield
 
-## what is CopyShield ?
+## What is CopyShield ?
 
 CopyShield is a simple Plagiarism Detection tool, which reads collection of documents and checks for similarity between them. It  can be used to detect plagiarism in documents or source codes.
 
 ## Report Generation
 
-### CSV Report
+### CSV Reports
 
-The program generates a CSV report containing the following columns:
+The report generation feature creates three separate files with detailed information as follows:
 
-1. **user1**: Name of the first user
-2. **user2**: Name of the second user
-3. **problem**: Name of the problem
-4. **similarity**: Similarity between the two files
+1. **Detected Plagiarism and Similarities**: This file contains the pairs of files that are flagged as likely duplicates along with the similarity percentage.
+
+2. **Pairwise Similarities**: This file contains list of similarity percentages between each pair of participants.
+
+3. **Participant Plagiarism Scores**: This file contains the plagiarism score of each participant.
+
+
 
 ### HTML Report
 
