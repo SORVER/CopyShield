@@ -30,6 +30,9 @@
 *.exe
 *.out
 *.app
+
+
+
 *.html
 *.csv
 
@@ -39,3 +42,6 @@ files2/
 settings.json
 
 reports/
+
+submissions.json
+submissions/

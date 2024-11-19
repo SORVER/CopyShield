@@ -2,9 +2,12 @@ import os
 import json
 
 def rename_files():
-    submissions_folder = 'submissions'
+    submissions_folder = os.path.join(os.path.dirname(__file__), "submissions")
 
-    with open('submissions.json') as f:
+    jsonPath = os.path.join(os.path.dirname(__file__), "submissions.json")
+
+
+    with open(jsonPath) as f:
         data = json.load(f)
 
     for submission in data['result']:
@@ -20,8 +23,6 @@ def rename_files():
         new_file = os.path.join(submissions_folder, f'{id}_{verdict}_{authorHandle}_{problemIndex}.cpp')
 
         try:
-            print(f'Renamed: {old_file} -> {new_file}')
-
             os.rename(old_file, new_file)
             print(f'Renamed: {old_file} -> {new_file}')
         except FileNotFoundError:

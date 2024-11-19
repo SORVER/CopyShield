@@ -3,13 +3,17 @@ import hashlib
 import json
 import time
 import random
+import os
 
 rand = random.randint(0, 100000)
 rand = str(rand).zfill(6)
 current_time = str(int(time.time()))
 
-with open('settings.json', 'r') as f:
+path = os.path.join(os.path.dirname(__file__), "settings.json")
+
+with open(path , 'r') as f:
     settings = json.load(f)
+
 
 api_key = settings['api_key']
 api_secret = settings['api_secret']
@@ -22,7 +26,10 @@ data = requests.get(f'https://codeforces.com/api/contest.status?groupCode={group
 
 
 # get the submissions in json file 
-with open('submissions.json', 'w') as f:
+
+path2 = os.path.join(os.path.dirname(__file__), "submissions.json")
+
+with open(path2, 'w') as f:
     json.dump(data, f, indent=4)
     print("submissions.json created successfully")
 
