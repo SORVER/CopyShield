@@ -102,7 +102,7 @@ g++ -std=c++17 main.cpp -o main
 
 ## TODO
 
-- [ ] Add support for highlighting the similer blocks in the HTML report
+- [x] Add support for highlighting the similer blocks in the HTML report
 - [ ] Add better hashing function
 - [ ] Add more efficient similarity calculation algorithm
 
