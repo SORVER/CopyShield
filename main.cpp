@@ -237,11 +237,11 @@ string GetDiff(vector<string> a, vector<string> b, vector<string> lcs){
             k++;
         } else{
             if(i < a.size() && (k >= lcs.size() || a[i] != lcs[k])){
-                result += " REMOVEDFLAGBEGIN " + a[i] + " REMOVEDFLAGEND "; 
+                result += "REMOVEDFLAGBEGIN " + a[i] + " REMOVEDFLAGEND"; 
                 i++;
             }
             if(j < b.size() && (k >= lcs.size() || b[j] != lcs[k])){
-                result += " ADDEDFLAGBEGIN " + b[j] + " ADDEDFLAGEND "; 
+                result += "ADDEDFLAGBEGIN " + b[j] + " ADDEDFLAGEND"; 
                 j++;
             }
         }
