@@ -26,6 +26,9 @@ The program generates an HTML report containing the code snippets of the all pai
 
 ![HTML report](https://github.com/saifadin1/CopyShield/blob/main/assets/image.png)
 
+![HTML report](https://github.com/saifadin1/CopyShield/blob/main/assets/image3.png)
+
+
 
 ## How it works ?
 
