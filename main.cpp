@@ -15,10 +15,11 @@ using namespace std;
 int THRESHOLD = 40;
 int WINDOW_SIZE = 5;
 int GRAMS = 3;
-int PRIME = 31;  
+int PRIME = 5;  
 int CODEBLOCK_SIZE = 10;
 
-double GetSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2);
+double JaccardSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2);
+double CosinSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2);
 vector<long long> GetFingerPrints(vector<long long> hashs);
 vector<long long> Hash_n_Grams(vector<string> grams);
 vector<string> Generate_n_grams(string code);
@@ -31,6 +32,13 @@ void ExportParticipantsCSV();  // contains handle and int for number of occurenc
 void ExportPairsOccurences();  // contains username1, username2, # of occurences of the pair
 string escapeHTML(string str);
 void showUsage();
+string highlightAddedAndRemoved(string str);
+string GetDiff(vector<string> a, vector<string> b, vector<string> lcs);
+vector<string> LCS(vector<string> a, vector<string> b);
+vector<std::string> splitCodeToWords(const string& input);
+
+
+
 
 
 
@@ -56,9 +64,24 @@ vector<pair<pair<submission, submission>, double>> similarSubmissions;
 vector<string> excludedProblems;
 vector<string> includedProblems;
 vector<string> includedUsers;
+map<string, string> diff;  // the diff of the two codes in the pair SubmissionId1_SubmissionId2
 
 
-double GetSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2) {  // Jaccard Similarity
+double CosinSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2) {  // Cosine Similarity:  https://en.wikipedia.org/wiki/Cosine_similarity
+    long long dotProduct = 0;
+    long long magnitude1 = 0;
+    long long magnitude2 = 0;
+    for (int i = 0; i < min(fingerPrints1.size(), fingerPrints2.size()); i++) {
+        // cout << fingerPrints1[i] << " " << fingerPrints2[i] << '\n';
+        dotProduct += fingerPrints1[i] * fingerPrints2[i];
+        magnitude1 += fingerPrints1[i] * fingerPrints1[i];
+        magnitude2 += fingerPrints2[i] * fingerPrints2[i];
+    }
+    if (magnitude1 == 0 || magnitude2 == 0) return 0;
+    return dotProduct / (sqrt(magnitude1) * sqrt(magnitude2));
+}
+
+double JaccardSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2) {  // Jaccard Similarity
     set<long long> intersection;
     set<long long> unionSet;
     for (long long i : fingerPrints1) {
@@ -74,6 +97,58 @@ double GetSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPr
     }
     if(unionSet.size() == 0) return 0;
     return (double)intersection.size() / unionSet.size();
+}
+
+vector<string> LCS(vector<string> a, vector<string> b){
+    int n = a.size();
+    int m = b.size();
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+    for(int i = 1; i <= n; i++){
+        for(int j = 1; j <= m; j++){
+            if(a[i - 1] == b[j - 1]){
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else{
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+    vector<string> lcs;
+    int i = n, j = m;
+    while(i > 0 && j > 0){
+        if(a[i - 1] == b[j - 1]){
+            lcs.push_back(a[i - 1]);
+            i--;
+            j--;
+        } else if(dp[i - 1][j] > dp[i][j - 1]){
+            i--;
+        } else{
+            j--;
+        }
+    }
+    reverse(lcs.begin(), lcs.end());
+    return lcs;
+}
+vector<std::string> splitCodeToWords(const string& input) {
+
+
+    // cout << input << '\n';
+
+    std::regex word_regex("(\\S+|\\s+)");
+    std::sregex_iterator words_begin = std::sregex_iterator(input.begin(), input.end(), word_regex);
+    std::sregex_iterator words_end = std::sregex_iterator();
+    
+    std::vector<std::string> words;
+    for (std::sregex_iterator i = words_begin; i != words_end; ++i) {
+        // cout << i->str();
+        words.push_back(i->str());
+    }
+    
+    // for(auto& word : words){
+    //     cout << word << '\n';
+    // }
+
+
+    return words;
 }
 
 vector<long long> GetFingerPrints(vector<long long> hashs) {
@@ -150,6 +225,31 @@ std::vector<std::string> split(const std::string &str, char delimiter) {
 }
 
 
+
+string GetDiff(vector<string> a, vector<string> b, vector<string> lcs){
+    int i=0, j=0, k=0;
+    string result;
+    while(i < a.size() || j < b.size()){
+        if(k < lcs.size() && i < a.size() && j < b.size() && a[i] == lcs[k] && b[j] == lcs[k]){
+            result += a[i];
+            i++;
+            j++;
+            k++;
+        } else{
+            if(i < a.size() && (k >= lcs.size() || a[i] != lcs[k])){
+                result += " REMOVEDFLAGBEGIN " + a[i] + " REMOVEDFLAGEND "; 
+                i++;
+            }
+            if(j < b.size() && (k >= lcs.size() || b[j] != lcs[k])){
+                result += " ADDEDFLAGBEGIN " + b[j] + " ADDEDFLAGEND "; 
+                j++;
+            }
+        }
+    }
+
+    return result;
+}
+
 void Compare() {
     for (int i = 0; i < files.size(); i++) {
         for (int j = i + 1; j < files.size(); j++) {
@@ -175,6 +275,11 @@ void Compare() {
             code2 = submissions[j].code;
 
 
+            string code1Temp = code1;
+            string code2Temp = code2;
+
+            // cout << code1 << '\n';
+
             if (code1.empty() || code2.empty()) {
                 continue;
             }
@@ -191,17 +296,28 @@ void Compare() {
             vector<long long> fingerPrints1 = GetFingerPrints(hashes1);
             vector<long long> fingerPrints2 = GetFingerPrints(hashes2);
 
-            double similarity = GetSimilarity(fingerPrints1, fingerPrints2) * 100;
+            // double similarity = CosinSimilarity(fingerPrints1, fingerPrints2) * 100;
+            double similarity = JaccardSimilarity(fingerPrints1, fingerPrints2) * 100;
+
+
+            // cout << code1Temp << '\n';
+
+            auto words1 = splitCodeToWords(code1Temp);
+            auto words2 = splitCodeToWords(code2Temp);
+            auto lcs = LCS(words1, words2);
+
+            string d = GetDiff(words1, words2, lcs);
+
+            diff[submissions[i].SubmissionId + "_" + submissions[j].SubmissionId] = d;
 
 
             if (similarity >= THRESHOLD && submissions[i].verdict == "AC" && submissions[j].verdict == "AC") {
-
-
                 similarSubmissions.push_back({{submissions[i], submissions[j]}, similarity});
             }
 
         }
     }
+    cout << "Done\n";
     sort(similarSubmissions.begin(), similarSubmissions.end(), [](pair<pair<submission, submission>, double> a, pair<pair<submission, submission>, double> b){
         return a.second > b.second;
     });
@@ -261,11 +377,6 @@ void ExportParticipantsCSV() {
     file << "Handle, # of Occurences\n";
 
 
-    // every range of percentage similarity has a different weight 
-    // 90% similarity has the highest weight => 9999999
-    // 70% similarity has the fourth highest weight => 10000
-    // 40% similarity has the lowest weight => 250
-
 
     for (const auto &pair : similarSubmissions) {
         if(pair.second >= 90) {
@@ -313,8 +424,35 @@ void exportCSV(){
     file.close();
 }
 
+string highlightAddedAndRemoved(string str){
+    // if found ADDEDFLAGBEGIN then add <span style="background-color: #ccffcc"> and close it with ADDEDFLAGEND
+    // if found REMOVEDFLAGBEGIN then add <span style="background-color: #ffcccc"> and close it with REMOVEDFLAGEND
+    string result;
+
+    for(int i = 0; i < str.size(); i++){
+        if(str.substr(i, 14) == "ADDEDFLAGBEGIN"){
+            result += "<span style='background-color: #ccffcc'>";
+            i += 13;
+        } else if(str.substr(i, 12) == "ADDEDFLAGEND"){
+            result += "</span>";
+            i += 11;
+        } else if(str.substr(i, 16) == "REMOVEDFLAGBEGIN"){
+            result += "<span style='background-color: #ffcccc'>";
+            i += 15;
+        } else if(str.substr(i, 14) == "REMOVEDFLAGEND"){
+            result += "</span>";
+            i += 13;
+        } else{
+            result += str[i];
+        }
+    }
+    return result;
+}
+
+
 string escapeHTML(string str) {
     string newStr;
+    
     for (char c : str) {
         if (c == '<') {
             newStr += "&lt;";
@@ -326,7 +464,7 @@ string escapeHTML(string str) {
             newStr += c;
         }
     }
-    return newStr;   
+    return highlightAddedAndRemoved(newStr);   
 }
 
 
@@ -334,8 +472,6 @@ string escapeHTML(string str) {
 void ExportHTML() {
 
     CREATE_DIR("reports/HTMLreports");
-
-
 
     // Create index.html file in the root directory
     std::ofstream htmlFile("reports/index.html");
@@ -400,6 +536,7 @@ void ExportHTML() {
         detailFile << "td:first-child { border-right: 2px solid #28a745; }\n";
         detailFile << ".code { font-family: 'Courier New', monospace; background-color: #f4f4f4; padding: 20px; border-radius: 5px; border: 1px solid #ddd; white-space: pre-wrap; word-wrap: break-word; color: #333; font-size: 1.1em; }\n";
         detailFile << ".similarity { font-weight: bold; font-size: 1.6em; color: #218838; margin-bottom: 30px; text-align: center; }\n";
+        detailFile << ".diff { background-color: #fffbcc; padding: 15px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Courier New', monospace; color: #333; white-space: pre-wrap; word-wrap: break-word; font-size: 1em; margin-top: 20px; }\n"; // Styling for diff
         detailFile << "@media (max-width: 768px) {\n";
         detailFile << "table { display: block; }\n";
         detailFile << "td { display: block; width: 100%; margin-bottom: 20px; }\n";
@@ -415,15 +552,16 @@ void ExportHTML() {
         detailFile << "<table>\n";
         detailFile << "<tr>\n";
 
+        // Submission 1
         detailFile << "<td>\n";
         detailFile << "<h3>Submission 1</h3>\n";
         detailFile << "<p><strong>SubmissionId:</strong> " << sub1.SubmissionId << "</p>\n";
-        // add name and problem
         detailFile << "<p><strong>Username:</strong> " << sub1.username << "</p>\n";
         detailFile << "<p><strong>Problem:</strong> " << sub1.problem << "</p>\n";
         detailFile << "<div class='code'>" << escapeHTML(sub1.code) << "</div>\n";
         detailFile << "</td>\n";
 
+        // Submission 2
         detailFile << "<td>\n";
         detailFile << "<h3>Submission 2</h3>\n";
         detailFile << "<p><strong>SubmissionId:</strong> " << sub2.SubmissionId << "</p>\n";
@@ -434,12 +572,27 @@ void ExportHTML() {
 
         detailFile << "</tr>\n";
         detailFile << "</table>\n";
-        detailFile << "</main>\n</body>\n</html>";
+
+        // Display the diff if it exists
+        auto diffKey = sub1.SubmissionId + "_" + sub2.SubmissionId;
+        if (diff.find(diffKey) != diff.end()) {
+            detailFile << "<div class='code'>\n";
+            detailFile << "<h3>Code Differences:</h3>\n";
+            detailFile << escapeHTML(diff[diffKey]); // Show the diff in a preformatted block
+            detailFile << "</div>\n";
+        }
+
+        detailFile << "</main>\n</body>\n</html>\n";
+
+        // Close the detailed report file
+        detailFile.close();
     }
 
-    htmlFile << "</main>\n</body>\n</html>";
+    // Close the main index file
     htmlFile.close();
 }
+
+
 
 
 void showUsage() {
