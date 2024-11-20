@@ -193,10 +193,15 @@ vector<string> Generate_n_grams(string code) {
     return grams;
 }
 
-void TextProcessing(string& code) {
+void RemoveComments(string& code) {
     // remove all comments
     code = regex_replace(code, regex("//.*"), "");
     code = regex_replace(code, regex("/\\*.*?\\*/"), "");
+}
+
+void TextProcessing(string& code) {
+    // remove all comments
+    RemoveComments(code);
 
     // remove all whitespace
     code.erase(remove(code.begin(), code.end(), ' '), code.end());
@@ -277,6 +282,9 @@ void Compare() {
 
             string code1Temp = code1;
             string code2Temp = code2;
+
+            RemoveComments(code1Temp);
+            RemoveComments(code2Temp);
 
             // cout << code1 << '\n';
 
@@ -507,7 +515,7 @@ void ExportHTML() {
 
         // List item with similarity percentage and button
         htmlFile << "<li>\n";
-        htmlFile << "<span class='similarity'>Similarity: " << similarity << "%</span>\n";
+        htmlFile << "<span class='similarity'>Similarity: " << int(similarity) << "%</span>\n";
         htmlFile << "<button onclick=\"window.location.href='HTMLreports/report_" << sub1.SubmissionId << "_" << sub2.SubmissionId << ".html';\">View Report</button>\n";
         htmlFile << "</li>\n";
     }
