@@ -256,8 +256,17 @@ string GetDiff(vector<string> a, vector<string> b, vector<string> lcs){
 }
 
 void Compare() {
+    cout << submissions.size() << '\n';
+    // for(auto i : submissions){
+    //     cout << i.username << ' ' << i.problem << ' ' << i.verdict <<  ' ' << i.SubmissionId << '\n';
+    // }
     for (int i = 0; i < files.size(); i++) {
+        // cout << i << '\n';
         for (int j = i + 1; j < files.size(); j++) {
+            // cout << j << ' ' << submissions[j].SubmissionId << '\n';
+            // if(submissions[j].SubmissionId.empty()){
+            //     cout << "Empty\n";
+            // }
             string code1, code2;
 
             if(submissions[i].verdict != "AC" || submissions[j].verdict != "AC") continue;
@@ -276,8 +285,12 @@ void Compare() {
             // files[j]->seekg(0, ios::beg);
 
 
+
+
             code1 = submissions[i].code;
             code2 = submissions[j].code;
+
+
 
 
             string code1Temp = code1;
@@ -491,7 +504,7 @@ void ExportHTML() {
     htmlFile << "body { font-family: 'Arial', sans-serif; background: #f7f9fb; color: #333; margin: 0; padding: 0; }\n";
     htmlFile << "header { background-color: #28a745; color: white; padding: 20px; text-align: center; font-size: 2.5em; border-bottom: 4px solid #218838; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }\n";
     htmlFile << "main { padding: 40px 20px; max-width: 1200px; margin: auto; background-color: white; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); border-radius: 10px; overflow: hidden; }\n";
-    htmlFile << "h2 { color: #28a745; text-align: center; font-size: 2.2em; margin-bottom: 20px; text-transform: uppercase; }\n";
+    htmlFile << "h2 { color: #28a745; text-align: center; font-size: 2.2em; margin-bottom: 20px; }\n";
     htmlFile << "ul { list-style-type: none; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }\n";
     htmlFile << "li { background: #ffffff; border-radius: 15px; padding: 20px; width: 300px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; transition: transform 0.3s ease-in-out, background-color 0.3s ease; cursor: pointer; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); }\n";
     htmlFile << "li:hover { transform: translateY(-10px); background-color: #f1f3f7; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }\n";
@@ -506,7 +519,9 @@ void ExportHTML() {
     htmlFile << "<header>Similar Submissions</header>\n";
     htmlFile << "<main>\n";
 
-    htmlFile << "<h2>All Similar Pairs</h2>\n";
+    htmlFile << "<h2>All Similar Pairs: ";
+    htmlFile << similarSubmissions.size();
+    htmlFile << "</h2>\n";
     htmlFile << "<ul>\n";
     for (const auto &pair : similarSubmissions) {
         const auto &sub1 = pair.first.first;
@@ -719,7 +734,6 @@ int main(int argc, char *argv[]) {
                     cerr << "Failed to open the file " << filePath << '\n';
                     continue;
                 }
-                files.push_back(file);
 
                 string code((istreambuf_iterator<char>(*file)), istreambuf_iterator<char>());
 
@@ -735,6 +749,7 @@ int main(int argc, char *argv[]) {
                 }
 
                 if(temp[1] != "AC") continue;
+                files.push_back(file);
 
                 // cout << temp[1] << '\n';
 
@@ -744,7 +759,9 @@ int main(int argc, char *argv[]) {
                     temp.erase(temp.begin() + 3);
                 }
 
+
                 temp[3].erase(temp[3].find('.'), temp[3].size());
+                // cout << "Processing " << temp[0] << " " << temp[1] << " " << temp[2] << " " << temp[3] << '\n';
 
                 submissions.push_back({temp[0], temp[1], temp[2], temp[3], code});
             }
