@@ -727,6 +727,9 @@ int main(int argc, char *argv[]) {
                     code.pop_back();
                 }
 
+                if(temp[1] != "AC") continue;
+
+
                 submissions.push_back({temp[0], temp[1], temp[2], temp[3], code});
             }
         }
