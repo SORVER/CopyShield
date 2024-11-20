@@ -709,6 +709,7 @@ int main(int argc, char *argv[]) {
             return 0;
         }
         struct dirent* entry;
+
         while ((entry = readdir(dir)) != NULL) {
             if (entry->d_type == DT_REG) {
                 string filePath = dirPath + "/" + entry->d_name;
@@ -722,20 +723,39 @@ int main(int argc, char *argv[]) {
 
                 string code((istreambuf_iterator<char>(*file)), istreambuf_iterator<char>());
 
-                // remove the spaces in the end of the file
-                while (code[code.size() - 1] == ' ' || code[code.size() - 1] == '\n') {
-                    code.pop_back();
+                if (!code.empty()) {
+                    while (!code.empty() && (code.back() == ' ' || code.back() == '\n')) {
+                        code.pop_back();
+                    }
+                }
+
+                if (temp.size() < 4) {
+                    cerr << "Invalid file name format: " << entry->d_name << '\n';
+                    continue;
                 }
 
                 if(temp[1] != "AC") continue;
 
+                // cout << temp[1] << '\n';
+
+                // if username contains _ 
+                while(temp.size() > 4){
+                    temp[2] = temp[2] + "_" + temp[3];
+                    temp.erase(temp.begin() + 3);
+                }
+
+                temp[3].erase(temp[3].find('.'), temp[3].size());
 
                 submissions.push_back({temp[0], temp[1], temp[2], temp[3], code});
             }
         }
+
+        cout << "Processing submissions...\n";
+
     } catch (const exception& e) {
         cout << "Error: " << e.what() << '\n';
     }
+
 
     closedir(dir);
 
