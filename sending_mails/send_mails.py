@@ -86,7 +86,7 @@ def process_and_email(handles_file, flags_file, api_key, api_secret):
 if __name__ == "__main__":
   
     handles_csv = "group_data.csv" 
-    flags_csv = "../reports/participants.csv" 
+    flags_csv = "../reportws/participants.csv" 
 
    
     api_secret = mail_data["api_secret"]
