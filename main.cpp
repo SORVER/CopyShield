@@ -4,11 +4,19 @@
 using namespace std;
 
 #ifdef _WIN32
+#include <direct.h> // For _mkdir, _rmdir
+#else
+#include <sys/stat.h> // For mkdir
+#include <unistd.h>   // For rmdir
+#endif
+
+// Macro definitions for creating and removing directories
+#ifdef _WIN32
 #define CREATE_DIR(name) _mkdir(name)
 #define REMOVE_DIR(name) _rmdir(name)
 #else
 #define CREATE_DIR(name) mkdir(name, 0777)
-#define REMOVE_DIR(name) rmdir(name)
+#define REMOVE_DIR(name) system(("rm -rf " + string(name)).c_str()) 
 #endif
 
 
@@ -437,7 +445,7 @@ void ExportParticipantsCSV() {
     }
     map<string, int> participants;
     ofstream file("reports/participants.csv");
-    file << "Handle, # of Occurences\n";
+    file << "Handle,Score,Flag\n";
 
 
 
@@ -466,7 +474,7 @@ void ExportParticipantsCSV() {
     });
 
     for(auto i : participantsVec){
-        file << i.first << "," << i.second << '\n';
+        file << i.first << "," << i.second << ","<< "False" << '\n';
     }
 
     file.close();
@@ -554,7 +562,12 @@ string escapeHTML(string str, bool similar = false) {
 
 void ExportHTML() {
 
-    CREATE_DIR("reports/HTMLreports");
+    if (CREATE_DIR("reports/HTMLreports") == 0) {
+        std::cout << "Directory 'reports/HTMLreports' created successfully.\n";
+    } else {
+        std::cerr << "Failed to create directory 'reports/HTMLreports'.\n";
+    }
+
 
     // Create index.html file in the root directory
     std::ofstream htmlFile("reports/index.html");
