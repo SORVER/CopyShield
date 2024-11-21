@@ -48,6 +48,16 @@ struct submission{
     string problem;
     string code;
     string SubmissionId;
+    string relativeTime = "N/A";
+
+    submission(string SubmissionId, string verdict, string username, string problem, string code, string relativeTime){
+        this->verdict = verdict;
+        this->username = username;
+        this->problem = problem;
+        this->SubmissionId = SubmissionId;
+        this->code = code;
+        this->relativeTime = relativeTime;
+    }
 
     submission(string SubmissionId, string verdict, string username, string problem, string code){
         this->verdict = verdict;
@@ -221,10 +231,10 @@ std::vector<std::string> split(const std::string &str, char delimiter) {
         tokens.push_back(token);
     }
 
-    if(tokens.size() == 5){
-        tokens[2] = tokens[2] + "_" + tokens[3];
-        tokens.erase(tokens.begin() + 3);
-    }
+    // if(tokens.size() == 5){
+    //     tokens[2] = tokens[2] + "_" + tokens[3];
+    //     tokens.erase(tokens.begin() + 3);
+    // }
     
     return tokens;
 }
@@ -581,6 +591,7 @@ void ExportHTML() {
         detailFile << "<p><strong>SubmissionId:</strong> " << sub1.SubmissionId << "</p>\n";
         detailFile << "<p><strong>Username:</strong> " << sub1.username << "</p>\n";
         detailFile << "<p><strong>Problem:</strong> " << sub1.problem << "</p>\n";
+        detailFile << "<p><strong>Time:</strong> " << sub1.relativeTime << "</p>\n";
         detailFile << "<div class='code'>" << escapeHTML(sub1.code) << "</div>\n";
         detailFile << "</td>\n";
 
@@ -590,6 +601,7 @@ void ExportHTML() {
         detailFile << "<p><strong>SubmissionId:</strong> " << sub2.SubmissionId << "</p>\n";
         detailFile << "<p><strong>Username:</strong> " << sub2.username << "</p>\n";
         detailFile << "<p><strong>Problem:</strong> " << sub2.problem << "</p>\n";
+        detailFile << "<p><strong>Time:</strong> " << sub2.relativeTime << "</p>\n";
         detailFile << "<div class='code'>" << escapeHTML(sub2.code) << "</div>\n";
         detailFile << "</td>\n";
 
@@ -743,27 +755,57 @@ int main(int argc, char *argv[]) {
                     }
                 }
 
-                if (temp.size() < 4) {
-                    cerr << "Invalid file name format: " << entry->d_name << '\n';
-                    continue;
+
+                if(temp[0][0] == '[') {
+                    // cout << "PASSED\n";
+                    // cout << temp.size() << '\n';
+                    if (temp.size() < 5) {
+                        cerr << "Invalid file name format: " << entry->d_name << '\n';
+                        continue;
+                    }
+
+                    if(temp[2] != "AC") continue;
+                    files.push_back(file);
+
+                    // cout << temp[1] << '\n';
+
+                    // if username contains _ 
+                    while(temp.size() > 5){
+                        temp[3] = temp[3] + "_" + temp[4];
+                        temp.erase(temp.begin() + 4);
+                    }
+
+
+                    temp[4].erase(temp[4].find('.'), temp[4].size());
+                    // cout << "Processing " << temp[0] << " " << temp[1] << " " << temp[2] << " " << temp[3] << '\n';
+
+                    temp[0].erase(0, 1);
+                    temp[0].erase(temp[0].size() - 1, 1);
+
+                    submissions.push_back({temp[1], temp[2], temp[3], temp[4], code, temp[0]});
+                } else {
+                    if (temp.size() < 4) {
+                        cerr << "Invalid file name format: " << entry->d_name << '\n';
+                        continue;
+                    }
+
+                    if(temp[1] != "AC") continue;
+                    files.push_back(file);
+
+                    // cout << temp[1] << '\n';
+
+                    // if username contains _ 
+                    while(temp.size() > 4){
+                        temp[2] = temp[2] + "_" + temp[3];
+                        temp.erase(temp.begin() + 3);
+                    }
+
+
+                    temp[3].erase(temp[3].find('.'), temp[3].size());
+                    // cout << "Processing " << temp[0] << " " << temp[1] << " " << temp[2] << " " << temp[3] << '\n';
+
+                    submissions.push_back({temp[0], temp[1], temp[2], temp[3], code});
                 }
-
-                if(temp[1] != "AC") continue;
-                files.push_back(file);
-
-                // cout << temp[1] << '\n';
-
-                // if username contains _ 
-                while(temp.size() > 4){
-                    temp[2] = temp[2] + "_" + temp[3];
-                    temp.erase(temp.begin() + 3);
-                }
-
-
-                temp[3].erase(temp[3].find('.'), temp[3].size());
-                // cout << "Processing " << temp[0] << " " << temp[1] << " " << temp[2] << " " << temp[3] << '\n';
-
-                submissions.push_back({temp[0], temp[1], temp[2], temp[3], code});
             }
         }
 
