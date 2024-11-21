@@ -51,8 +51,8 @@ First, the submissions should be fetched from the online judge (Vjudge or CodeFo
 
 * **Vjudge**: Simply download the submissions from the contest page as a zip file and files names will be formatted correctly as: ` <submission Id>_<Verdict>_<username>_<problem name>`
 
-* **CodeForces**: Similarly, download the submissions as a zip file from the contest page. However, there's a slight issue: the filenames are not formatted as needed. To fix this, we need to reformat them to match the required format:` <submission Id>_<Verdict>_<username>_<problem name>`.
-    `CodeForcesSubmissionsReformatting`
+* **CodeForces**: Similarly, download the submissions as a zip file from the contest page. However, there's a slight issue: the filenames are not formatted as needed. To fix this, we need to reformat them to match the required format:`<submission Id>_<Verdict>_<username>_<problem name>`.
+    `CodeForcesSubmissionsReformatting` 
     this directory contains two scripts to help you with that:
     1. `codeforces_api_client.py` : this script will fetch the metadata of the submissions and save it in a json file and it retrieves `api_key`,`api_secret`,`group_code`and`contest_id` from the json file `settings.json` located in the same directory.
     2. `rename_submissions.py` : this script will rename the files in  `CodeForcesSubmissionsReformatting/submissions` to be formatted so the fetched submissions should be in this path.
