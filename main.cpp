@@ -38,7 +38,7 @@ void exportCSV();
 void ExportHTML();
 void ExportParticipantsCSV();  // contains handle and int for number of occurences
 void ExportPairsOccurences();  // contains username1, username2, # of occurences of the pair
-string escapeHTML(string str);
+string escapeHTML(string str, bool similar);
 void showUsage();
 string highlightAddedAndRemoved(string str);
 string GetDiff(vector<string> a, vector<string> b, vector<string> lcs);
@@ -89,6 +89,7 @@ vector<string> excludedProblems;
 vector<string> includedProblems;
 vector<string> includedUsers;
 map<string, string> diff;  // the diff of the two codes in the pair SubmissionId1_SubmissionId2
+map<string, string> similar; 
 
 
 double CosinSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2) {  // Cosine Similarity:  https://en.wikipedia.org/wiki/Cosine_similarity
@@ -279,6 +280,29 @@ string GetDiff(vector<string> a, vector<string> b, vector<string> lcs){
     return result;
 }
 
+string GetSimilarity(vector<string> a, vector<string> b, vector<string> lcs){
+    int i=0, j=0, k=0;
+    string result;
+    while(i < a.size() || j < b.size()){
+        if(k < lcs.size() && i < a.size() && j < b.size() && a[i] == lcs[k] && b[j] == lcs[k]){
+            result += "SIMILARFLAGBEGIN" + a[i] + "SIMILARFLAGEND"; 
+            i++;
+            j++;
+            k++;
+        } else{
+            if(i < a.size() && (k >= lcs.size() || a[i] != lcs[k])){
+                result += a[i];
+                i++;
+            }
+            if(j < b.size() && (k >= lcs.size() || b[j] != lcs[k])){
+                result += b[j];
+                j++;
+            }
+        }
+    }
+    return result;
+}
+
 void Compare() {
     cout << submissions.size() << '\n';
     // for(auto i : submissions){
@@ -352,8 +376,10 @@ void Compare() {
             auto lcs = LCS(words1, words2);
 
             string d = GetDiff(words1, words2, lcs);
+            string s = GetSimilarity(words1, words2, lcs);
 
             diff[submissions[i].SubmissionId + "_" + submissions[j].SubmissionId] = d;
+            similar[submissions[i].SubmissionId + "_" + submissions[j].SubmissionId] = s;
 
 
             if (similarity >= THRESHOLD && submissions[i].verdict == "AC" && submissions[j].verdict == "AC") {
@@ -494,8 +520,28 @@ string highlightAddedAndRemoved(string str){
     return result;
 }
 
+string highlightSimilar(string str){
+    // if found SIMILARFLAGBEGIN then add <span style="background-color: #b6dcfa"> and close it with SIMILARFLAGEND
+    string result;
 
-string escapeHTML(string str) {
+
+
+    for(int i = 0; i < str.size(); i++){
+        if(str.substr(i, 16) == "SIMILARFLAGBEGIN"){
+            result += "<span style='background-color: #b6dcfa'>";
+            i += 15;
+        } else if(str.substr(i, 14) == "SIMILARFLAGEND"){
+            result += "</span>";
+            i += 13;
+        } else{
+            result += str[i];
+        }
+    }
+    return result;
+}
+
+
+string escapeHTML(string str, bool similar = false) {
     string newStr;
     
     for (char c : str) {
@@ -509,7 +555,7 @@ string escapeHTML(string str) {
             newStr += c;
         }
     }
-    return highlightAddedAndRemoved(newStr);   
+    return similar ? highlightSimilar(newStr) : highlightAddedAndRemoved(newStr);   
 }
 
 
@@ -628,13 +674,19 @@ void ExportHTML() {
         detailFile << "</table>\n";
 
         // Display the diff if it exists
-        auto diffKey = sub1.SubmissionId + "_" + sub2.SubmissionId;
-        if (diff.find(diffKey) != diff.end()) {
+        auto Key = sub1.SubmissionId + "_" + sub2.SubmissionId;
+        if (diff.find(Key) != diff.end()) {
             detailFile << "<div class='code'>\n";
             detailFile << "<h3>Code Differences:</h3>\n";
-            detailFile << escapeHTML(diff[diffKey]); // Show the diff in a preformatted block
+            detailFile << escapeHTML(diff[Key]); // Show the diff in a preformatted block
             detailFile << "</div>\n";
         }
+
+        detailFile << "<div class='code'>\n";
+        detailFile << "<h3>Code Similarity:</h3>\n";
+        detailFile << escapeHTML(similar[Key] , true); 
+        detailFile << "</div>\n";
+                
 
         detailFile << "</main>\n</body>\n</html>\n";
 
