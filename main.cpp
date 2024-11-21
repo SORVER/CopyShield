@@ -4,6 +4,14 @@
 using namespace std;
 
 #ifdef _WIN32
+#include <direct.h> // For _mkdir, _rmdir
+#else
+#include <sys/stat.h> // For mkdir
+#include <unistd.h>   // For rmdir
+#endif
+
+// Macro definitions for creating and removing directories
+#ifdef _WIN32
 #define CREATE_DIR(name) _mkdir(name)
 #define REMOVE_DIR(name) _rmdir(name)
 #else
@@ -508,7 +516,12 @@ string escapeHTML(string str) {
 
 void ExportHTML() {
 
-    CREATE_DIR("reports/HTMLreports");
+    if (CREATE_DIR("reports/HTMLreports") == 0) {
+        std::cout << "Directory 'reports/HTMLreports' created successfully.\n";
+    } else {
+        std::cerr << "Failed to create directory 'reports/HTMLreports'.\n";
+    }
+
 
     // Create index.html file in the root directory
     std::ofstream htmlFile("reports/index.html");
