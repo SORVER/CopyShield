@@ -14,6 +14,11 @@
     + [**CodeForces**](#--codeforces--)
   * [Compile cpp code](#compile-cpp-code)
   * [Getting the reports](#getting-the-reports)
+    * [Sending emails](#sending-emails)
+        + [Add a csv file with the following name `group_data.csv` in the following path `./src/sending_mails` and contains the following columns:](#add-a-csv-file-with-the-following-name--group_datacsv--in-the-following-path--src-sending_mails--and-contains-the-following-columns-)
+        + [Use Mailjet to get the API key and secret](#use-mailjet-to-get-the-api-key-and-secret)
+        + [Ensure the following environment variables are set in the `.env` file:](#ensure-the-following-environment-variables-are-set-in-the--env--file-)
+        + [Run the following command to send the emails](#run-the-following-command-to-send-the-emails)
 - [Options](#options)
     * [Example](#example)
 - [TODO](#todo)
@@ -63,7 +68,7 @@ The program generates an HTML report containing the code snippets of the all pai
 
 5. **Similarity Calculation**: The program computes Jaccard Similarity between fingerprints of each pair of files. If similarity exceeds a threshold , it flags the files as likely duplicates.
 
-## Usage
+## Getting Started
 
 ### Setting up the environment
 
@@ -117,8 +122,40 @@ g++ -std=c++17 main.cpp -o main
 
 The reports will be generated in `./reports` directory. 
 
+You should flag participants who have been verified as cheaters to send them emails in `reports/praticapnts.csv`.
+### Sending emails
 
-## Options 
+you can send emails to the flagged participants by the following steps
+
+#### Prepare a CSV file
+Add a csv file with the following name `group_data.csv` in the following path `./src/sending_mails` and contains the following columns:
+
+```bash
+| Handle | Email | Name |
+```
+
+#### Set up Mailjet API credentials
+
+Ensure the following environment variables are set in the `.env` file:
+
+```bash
+MAILJET_API_KEY="<your-api-key>"
+MAILJET_API_SECRET="<your-api-secret>"
+MAILJET_SENDER_EMAIL="<your-sender-mail>"
+```
+
+#### Run the following command to send the emails
+
+```bash
+python .\src\sending_mails\send_mails.py
+```
+
+
+
+
+
+
+## Command-Line options 
 
 * Set the threshold value for similarity
     ```bash
