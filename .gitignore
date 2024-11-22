@@ -36,6 +36,8 @@
 *.html
 *.csv
 
+.env
+
 files/
 files2/
 files3/

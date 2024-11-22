@@ -21,9 +21,9 @@ using namespace std;
 
 
 int THRESHOLD = 40;
-int WINDOW_SIZE = 5;
+int WINDOW_SIZE = 4;
 int GRAMS = 3;
-int PRIME = 5;  
+int PRIME = 7;  
 int CODEBLOCK_SIZE = 10;
 
 double JaccardSimilarity(vector<long long> fingerPrints1, vector<long long> fingerPrints2);

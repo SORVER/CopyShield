@@ -2,12 +2,8 @@ import csv
 from mailjet_rest import Client
 import json
 import os
+from dotenv import load_dotenv
 
-
-path = os.path.join(os.path.dirname(__file__), "mail_data.json")
-
-with open(path , 'r') as f:
-    mail_data = json.load(f)
 
 
 def read_csv(file_path):
@@ -89,9 +85,9 @@ if __name__ == "__main__":
     flags_csv = "../reports/participants.csv" 
 
    
-    api_secret = mail_data["api_secret"]
-    api_key = mail_data["api_key"] 
-    sender_email = mail_data["email"]
+    api_secret = os.getenv('MAILJET_API_SECRET')
+    api_key = os.getenv('MAILJET_API_KEY')
+    sender_email = os.getenv('MAILJET_SENDER_EMAIL')
 
 
     process_and_email(handles_csv, flags_csv, api_key, api_secret)
