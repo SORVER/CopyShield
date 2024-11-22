@@ -15,13 +15,12 @@
   * [Compile cpp code](#compile-cpp-code)
   * [Getting the reports](#getting-the-reports)
     * [Sending emails](#sending-emails)
-        + [Add a csv file with the following name `group_data.csv` in the following path `./src/sending_mails` and contains the following columns:](#add-a-csv-file-with-the-following-name--group_datacsv--in-the-following-path--src-sending_mails--and-contains-the-following-columns-)
-        + [Use Mailjet to get the API key and secret](#use-mailjet-to-get-the-api-key-and-secret)
-        + [Ensure the following environment variables are set in the `.env` file:](#ensure-the-following-environment-variables-are-set-in-the--env--file-)
+        + [Prepare a CSV file](#prepare-a-csv-file)
+        + [Set up Mailjet API credentials](#set-up-mailjet-api-credentials)
         + [Run the following command to send the emails](#run-the-following-command-to-send-the-emails)
-- [Options](#options)
-    * [Example](#example)
-- [TODO](#todo)
+    * [Command-Line options](#command-line-options)
+        + [Example](#example)
+    * [TODO](#todo)
 
 ## What is CopyShield ?
 
