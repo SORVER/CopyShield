@@ -20,7 +20,7 @@
         + [Run the following command to send the emails](#run-the-following-command-to-send-the-emails)
     * [Command-Line options](#command-line-options)
         + [Example](#example)
-    * [TODO](#todo)
+- [TODO](#todo)
 
 ## What is CopyShield ?
 
