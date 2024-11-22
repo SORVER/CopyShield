@@ -295,7 +295,7 @@ string GetSimilarity(vector<string> a, vector<string> b, vector<string> lcs){
                 i++;
             }
             if(j < b.size() && (k >= lcs.size() || b[j] != lcs[k])){
-                result += b[j];
+                // result += b[j];
                 j++;
             }
         }
