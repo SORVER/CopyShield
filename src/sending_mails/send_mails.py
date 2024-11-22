@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 
 
+load_dotenv()
 
 def read_csv(file_path):
     """Read data from a CSV file and return as a list of dictionaries."""
@@ -82,7 +83,7 @@ def process_and_email(handles_file, flags_file, api_key, api_secret):
 if __name__ == "__main__":
   
     handles_csv = "group_data.csv" 
-    flags_csv = "../reports/participants.csv" 
+    flags_csv = "../../reports/participants.csv" 
 
    
     api_secret = os.getenv('MAILJET_API_SECRET')
