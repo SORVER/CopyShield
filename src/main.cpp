@@ -562,11 +562,16 @@ string escapeHTML(string str, bool similar = false) {
 
 void ExportHTML() {
 
-    if (CREATE_DIR("reports/HTMLreports") == 0) {
-        std::cout << "Directory 'reports/HTMLreports' created successfully.\n";
-    } else {
-        std::cerr << "Failed to create directory 'reports/HTMLreports'.\n";
-    }
+    // CREATE_DIR("reports/reportsHTML");
+
+    CREATE_DIR("reports/HTMLreports");
+
+
+    // if (CREATE_DIR("reports/reportsHTML") == 0) {
+    //     std::cout << "Directory 'reports/HTMLreports' created successfully.\n";
+    // } else {
+    //     std::cerr << "Failed to create directory 'reports/HTMLreports'.\n";
+    // }
 
 
     // Create index.html file in the root directory
