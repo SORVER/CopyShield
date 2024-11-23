@@ -10,8 +10,8 @@
 - [Getting Started](#Getting-Started)
   * [Setting up the environment](#setting-up-the-environment)
   * [Fetching Submissions](#fetching-submissions)
-    + [**Vjudge**](#--vjudge--)
-    + [**CodeForces**](#--codeforces--)
+    + [**Vjudge**](#vjudge)
+    + [**CodeForces**](#CodeForces)
   * [Compile cpp code](#compile-cpp-code)
   * [Getting the reports](#getting-the-reports)
     * [Sending emails](#sending-emails)
@@ -83,7 +83,7 @@ git clone https://github.com/saifadin1/CopyShield.git
 pip install -r requirements.txt
 ```
 
-3. Create the `.env` file: Copy the contents of the `.env.example` file to create a new `.env` file in the project root directory and set the required environment variables if needed.
+3. Create the `.env` file: Copy the contents of the [`.env.example`](https://github.com/saifadin1/CopyShield/blob/main/.env.example) file to create a new `.env` file in the project root directory and set the required environment variables if needed.
 
 
 
@@ -133,7 +133,7 @@ Add a csv file with the following name `group_data.csv` in the following path `.
 | Handle | Email | Name |
 ```
 
-#### Set up Mailjet API credentials
+#### Set up [Mailjet](https://www.mailjet.com/) API credentials
 
 Ensure the following environment variables are set in the `.env` file:
 
