@@ -109,12 +109,12 @@ this directory contains two scripts to help you with that:
 ### Compile cpp code
 
 ```bash
-g++ -std=c++17 main.cpp -o main
+g++ -std=c++17 .\src\main.cpp -o main
 ```
 
 2. Run the compiled code using the following command:
 ```bash
-.\src\main .\<path to the directory containing the files to be checked>
+.\main .\<path to the directory containing the files to be checked>
 ```
 
 ### Getting the reports
