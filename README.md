@@ -7,7 +7,7 @@
   * [CSV Reports](#csv-reports)
   * [HTML Report](#html-report)
 - [How it works ?](#how-it-works-)
-- [Usage](#usage)
+- [Getting Started](#Getting-Started)
   * [Setting up the environment](#setting-up-the-environment)
   * [Fetching Submissions](#fetching-submissions)
     + [**Vjudge**](#--vjudge--)
