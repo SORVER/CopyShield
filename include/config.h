@@ -1,4 +1,9 @@
-#pragma once
+
+#include <iostream>
+#include <string>
+#include <map>
+
+using namespace std;
 
 extern int THRESHOLD;
 extern int WINDOW_SIZE;

@@ -6,4 +6,4 @@
 
 using namespace std;
 
-vector<shared_ptr<ifstream>> files;
+extern vector<shared_ptr<ifstream>> files;

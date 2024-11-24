@@ -1,5 +1,5 @@
 #include<bits/stdc++.h>
-#include "textProcessing.h"
+#include "../include/textProcessing.h"
 
 using namespace std;
 
@@ -63,7 +63,7 @@ std::vector<std::string> splitStringByDelimiter(const std::string &str, char del
 }
 
 
-string escapeHTML(string str, bool similar = false) {
+string escapeHTML(string str, bool similar) {
     string newStr;
     
     for (char c : str) {

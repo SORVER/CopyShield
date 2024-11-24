@@ -1,9 +1,9 @@
 #include<bits/stdc++.h>
-#include "exportReports.h"
-#include "submissions.h"
-#include "fileUtils.h"
-#include "textProcessing.h"
-#include "config.h"
+#include "../include/exportReports.h"
+#include "../include/submissions.h"
+#include "../include/fileUtils.h"
+#include "../include/textProcessing.h"
+#include "../include/config.h"
 
 using namespace std;
 

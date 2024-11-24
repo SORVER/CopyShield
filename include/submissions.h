@@ -38,5 +38,5 @@ struct submission{
     }
 };
 
-vector<submission> submissions;
-vector<pair<pair<submission, submission>, double>> similarSubmissions;
+extern vector<submission> submissions;
+extern vector<pair<pair<submission, submission>, double>> similarSubmissions;

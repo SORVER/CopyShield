@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
-#include "similarity.h"
-#include "filters.h"
-#include "submissions.h"
-#include "fileManager.h"
-#include "config.h"
-#include "textProcessing.h"
-#include "helpers.h"
+#include "../include/similarity.h"
+#include "../include/filters.h"
+#include "../include/submissions.h"
+#include "../include/fileManager.h"
+#include "../include/config.h"
+#include "../include/textProcessing.h"
+#include "../include/helpers.h"
 
 using namespace std;
 

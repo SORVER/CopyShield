@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
-#include "helpers.h"
-#include "config.h"
+#include "../include/helpers.h"
+#include "../include/config.h"
 
 using namespace std;
 

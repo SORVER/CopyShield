@@ -1,16 +1,16 @@
 #include <bits/stdc++.h>
 #include <dirent.h>
 #include <fstream>
-#include "fileUtils.h"
-#include "submissions.h"
-#include "similarity.h"
-#include "exportReports.h"
-#include "config.h"
-#include "textProcessing.h"
-#include "filters.h"
-#include "helpers.h"
-#include "textProcessing.h"
-#include "fileManager.h"
+#include "../include/fileUtils.h"
+#include "../include/submissions.h"
+#include "../include/similarity.h"
+#include "../include/exportReports.h"
+#include "../include/config.h"
+#include "../include/textProcessing.h"
+#include "../include/filters.h"
+#include "../include/helpers.h"
+#include "../include/textProcessing.h"
+#include "../include/fileManager.h"
 
 
 using namespace std;
