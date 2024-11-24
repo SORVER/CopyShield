@@ -61,3 +61,118 @@ std::vector<std::string> splitStringByDelimiter(const std::string &str, char del
     
     return tokens;
 }
+
+
+string escapeHTML(string str, bool similar = false) {
+    string newStr;
+    
+    for (char c : str) {
+        if (c == '<') {
+            newStr += "&lt;";
+        } else if (c == '>') {
+            newStr += "&gt;";
+        } else if (c == '&') {
+            newStr += "&amp;";
+        } else {
+            newStr += c;
+        }
+    }
+    return similar ? highlightSimilar(newStr) : highlightAddedAndRemoved(newStr);   
+
+    
+}
+
+
+
+string highlightSimilar(string str){
+    // if found SIMILARFLAGBEGIN then add <span style="background-color: #b6dcfa"> and close it with SIMILARFLAGEND
+    string result;
+
+
+
+    for(int i = 0; i < str.size(); i++){
+        if(str.substr(i, 16) == "SIMILARFLAGBEGIN"){
+            result += "<span style='background-color: #b6dcfa'>";
+            i += 15;
+        } else if(str.substr(i, 14) == "SIMILARFLAGEND"){
+            result += "</span>";
+            i += 13;
+        } else{
+            result += str[i];
+        }
+    }
+    return result;
+}
+
+string highlightAddedAndRemoved(string str){
+    // if found ADDEDFLAGBEGIN then add <span style="background-color: #ccffcc"> and close it with ADDEDFLAGEND
+    // if found REMOVEDFLAGBEGIN then add <span style="background-color: #ffcccc"> and close it with REMOVEDFLAGEND
+    string result;
+
+    for(int i = 0; i < str.size(); i++){
+        if(str.substr(i, 14) == "ADDEDFLAGBEGIN"){
+            result += "<span style='background-color: #ccffcc'>";
+            i += 13;
+        } else if(str.substr(i, 12) == "ADDEDFLAGEND"){
+            result += "</span>";
+            i += 11;
+        } else if(str.substr(i, 16) == "REMOVEDFLAGBEGIN"){
+            result += "<span style='background-color: #ffcccc'>";
+            i += 15;
+        } else if(str.substr(i, 14) == "REMOVEDFLAGEND"){
+            result += "</span>";
+            i += 13;
+        } else{
+            result += str[i];
+        }
+    }
+    return result;
+}
+
+
+string GetDiff(vector<string> a, vector<string> b, vector<string> lcs){
+    int i=0, j=0, k=0;
+    string result;
+    while(i < a.size() || j < b.size()){
+        if(k < lcs.size() && i < a.size() && j < b.size() && a[i] == lcs[k] && b[j] == lcs[k]){
+            result += a[i];
+            i++;
+            j++;
+            k++;
+        } else{
+            if(i < a.size() && (k >= lcs.size() || a[i] != lcs[k])){
+                result += "REMOVEDFLAGBEGIN" + a[i] + "REMOVEDFLAGEND"; 
+                i++;
+            }
+            if(j < b.size() && (k >= lcs.size() || b[j] != lcs[k])){
+                result += "ADDEDFLAGBEGIN" + b[j] + "ADDEDFLAGEND"; 
+                j++;
+            }
+        }
+    }
+
+    return result;
+}
+
+string GetSimilarity(vector<string> a, vector<string> b, vector<string> lcs){
+    int i=0, j=0, k=0;
+    string result;
+    while(i < a.size() || j < b.size()){
+        if(k < lcs.size() && i < a.size() && j < b.size() && a[i] == lcs[k] && b[j] == lcs[k]){
+            result += "SIMILARFLAGBEGIN" + a[i] + "SIMILARFLAGEND"; 
+            i++;
+            j++;
+            k++;
+        } else{
+            if(i < a.size() && (k >= lcs.size() || a[i] != lcs[k])){
+                result += a[i];
+                i++;
+            }
+            if(j < b.size() && (k >= lcs.size() || b[j] != lcs[k])){
+                // result += b[j];
+                j++;
+            }
+        }
+    }
+    return result;
+}

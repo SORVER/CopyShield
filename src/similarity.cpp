@@ -5,6 +5,7 @@
 #include "fileManager.h"
 #include "config.h"
 #include "textProcessing.h"
+#include "helpers.h"
 
 using namespace std;
 
