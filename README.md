@@ -108,13 +108,22 @@ this directory contains two scripts to help you with that:
 
 ### Compile cpp code
 
+1. Navigate to the `src` directory using the following command:
+
 ```bash
-g++ -std=c++17 .\src\main.cpp -o main
+cd ./src
 ```
 
-2. Run the compiled code using the following command:
+2. Compile the code using the following command:
+
 ```bash
-.\main .\<path to the directory containing the files to be checked>
+g++ *.cpp -o main
+```
+
+3. Run the compiled code using the following command:
+
+```bash
+./src/main ./<path to the directory containing the files to be checked>
 ```
 
 ### Getting the reports
