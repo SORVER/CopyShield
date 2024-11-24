@@ -1,5 +1,9 @@
 #include <bits/stdc++.h>
+#include "similarity.h"
 #include "filters.h"
+#include "submissions.h"
+#include "fileManager.h"
+#include "config.h"
 
 using namespace std;
 
