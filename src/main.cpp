@@ -23,8 +23,6 @@ using namespace std;
 vector<long long> GetFingerPrints(vector<long long> hashs);
 vector<long long> Hash_n_Grams(vector<string> grams);
 vector<string> Generate_n_grams(string code);
-void TextProcessing(string& code);
-std::vector<std::string> split(const std::string &str, char delimiter);
 void exportCSV();
 void ExportHTML();
 void ExportParticipantsCSV();  // contains handle and int for number of occurences
@@ -34,7 +32,6 @@ void showUsage();
 string highlightAddedAndRemoved(string str);
 string GetDiff(vector<string> a, vector<string> b, vector<string> lcs);
 vector<string> LCS(vector<string> a, vector<string> b);
-vector<std::string> splitCodeToWords(const string& input);
 
 
 
@@ -81,28 +78,7 @@ vector<string> LCS(vector<string> a, vector<string> b){
     reverse(lcs.begin(), lcs.end());
     return lcs;
 }
-vector<std::string> splitCodeToWords(const string& input) {
 
-
-    // cout << input << '\n';
-
-    std::regex word_regex("(\\S+|\\s+)");
-    std::sregex_iterator words_begin = std::sregex_iterator(input.begin(), input.end(), word_regex);
-    std::sregex_iterator words_end = std::sregex_iterator();
-    
-    std::vector<std::string> words;
-    for (std::sregex_iterator i = words_begin; i != words_end; ++i) {
-        // cout << i->str();
-        words.push_back(i->str());
-    }
-    
-    // for(auto& word : words){
-    //     cout << word << '\n';
-    // }
-
-
-    return words;
-}
 
 vector<long long> GetFingerPrints(vector<long long> hashs) {
     vector<long long> fingerPrints;
@@ -146,41 +122,9 @@ vector<string> Generate_n_grams(string code) {
     return grams;
 }
 
-void RemoveComments(string& code) {
-    // remove all comments
-    code = regex_replace(code, regex("//.*"), "");
-    code = regex_replace(code, regex("/\\*.*?\\*/"), "");
-}
 
-void TextProcessing(string& code) {
-    // remove all comments
-    RemoveComments(code);
 
-    // remove all whitespace
-    code.erase(remove(code.begin(), code.end(), ' '), code.end());
-    code.erase(remove(code.begin(), code.end(), '\n'), code.end());
-    code.erase(remove(code.begin(), code.end(), '\t'), code.end());
 
-    // transform the code to lowercase
-    transform(code.begin(), code.end(), code.begin(), ::tolower);
-}
-
-std::vector<std::string> split(const std::string &str, char delimiter) {
-    std::vector<std::string> tokens;
-    std::stringstream ss(str);
-    std::string token;
-    
-    while (std::getline(ss, token, delimiter)) {
-        tokens.push_back(token);
-    }
-
-    // if(tokens.size() == 5){
-    //     tokens[2] = tokens[2] + "_" + tokens[3];
-    //     tokens.erase(tokens.begin() + 3);
-    // }
-    
-    return tokens;
-}
 
 
 

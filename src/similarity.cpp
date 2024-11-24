@@ -4,6 +4,7 @@
 #include "submissions.h"
 #include "fileManager.h"
 #include "config.h"
+#include "textProcessing.h"
 
 using namespace std;
 
