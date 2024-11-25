@@ -25,15 +25,15 @@ def rename_files():
         if(lang.find('C++') != -1):
             old_file = os.path.join(submissions_folder, f'{id}.cpp')
             new_file = os.path.join(submissions_folder, f'[{relativeTimeMinutes}]_{id}_{verdict}_{authorHandle}_{problemIndex}.cpp')
+        elif(lang.find('C#') != -1):
+            old_file = os.path.join(submissions_folder, f'{id}.cs')
+            new_file = os.path.join(submissions_folder, f'[{relativeTimeMinutes}]_{id}_{verdict}_{authorHandle}_{problemIndex}.cs')
         elif(lang.find('Python') != -1 or lang.find('Py') != -1):
             old_file = os.path.join(submissions_folder, f'{id}.py')
             new_file = os.path.join(submissions_folder, f'[{relativeTimeMinutes}]_{id}_{verdict}_{authorHandle}_{problemIndex}.py')
         elif(lang.find('C') != -1):
             old_file = os.path.join(submissions_folder, f'{id}.c')
             new_file = os.path.join(submissions_folder, f'[{relativeTimeMinutes}]_{id}_{verdict}_{authorHandle}_{problemIndex}.c')
-        elif(lang.find('C#') != -1):
-            old_file = os.path.join(submissions_folder, f'{id}.cs')
-            new_file = os.path.join(submissions_folder, f'[{relativeTimeMinutes}]_{id}_{verdict}_{authorHandle}_{problemIndex}.cs')
 
         try:
             os.rename(old_file, new_file)
