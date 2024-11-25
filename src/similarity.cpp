@@ -43,10 +43,13 @@ double JaccardSimilarity(vector<long long> fingerPrints1, vector<long long> fing
 }
 
 void Compare() {
-    cout << submissions.size() << '\n';
+    cout << fixed << setprecision(0);
     // for(auto i : submissions){
     //     cout << i.username << ' ' << i.problem << ' ' << i.verdict <<  ' ' << i.SubmissionId << '\n';
     // }
+    int totalIterations = files.size() * (files.size() - 1) / 2;
+    int currentIteration = 0;
+    const int barWidth = 50; 
     for (int i = 0; i < files.size(); i++) {
         // cout << i << '\n';
         for (int j = i + 1; j < files.size(); j++) {
@@ -56,12 +59,27 @@ void Compare() {
             // }
             string code1, code2;
 
-            if(submissions[i].verdict != "AC" || submissions[j].verdict != "AC") continue;
-            if(submissions[i].username == submissions[j].username) continue;    
-            if(submissions[i].problem != submissions[j].problem) continue;
-            if(find(excludedProblems.begin(), excludedProblems.end(), submissions[i].problem) != excludedProblems.end()) continue;
-            if(includedProblems.size() > 0 && find(includedProblems.begin(), includedProblems.end(), submissions[i].problem) == includedProblems.end()) continue;
-            if(includedUsers.size() > 0 && (find(includedUsers.begin(), includedUsers.end(), submissions[i].username) == includedUsers.end() && find(includedUsers.begin(), includedUsers.end(), submissions[j].username) == includedUsers.end())) continue;
+
+            bool skip = false;
+
+            if(submissions[i].verdict != "AC" || submissions[j].verdict != "AC") skip = true;
+            if(submissions[i].username == submissions[j].username) skip = true;    
+            if(submissions[i].problem != submissions[j].problem) skip = true;
+            if(find(excludedProblems.begin(), excludedProblems.end(), submissions[i].problem) != excludedProblems.end()) skip = true;
+            if(includedProblems.size() > 0 && find(includedProblems.begin(), includedProblems.end(), submissions[i].problem) == includedProblems.end()) skip = true;
+            if(includedUsers.size() > 0 &&
+             (find(includedUsers.begin(), includedUsers.end(), submissions[i].username) == includedUsers.end() && 
+                find(includedUsers.begin(), includedUsers.end(), submissions[j].username) == includedUsers.end())) skip = true;
+
+
+            if(skip) {
+                currentIteration++;
+                double progress = (double)currentIteration / totalIterations;
+                cout << '\r' << "Progress: ";
+                cout << progress * 100 << "%" << flush;
+                continue;
+            }
+
 
             // getline(*files[i], code1, '\0');
             // files[i]->clear();               
@@ -125,9 +143,19 @@ void Compare() {
                 similarSubmissions.push_back({{submissions[i], submissions[j]}, similarity});
             }
 
+            currentIteration++;
+            double progress = (double)currentIteration / totalIterations;
+
+            cout << '\r' << "Progress: ";
+            cout << progress * 100 << "%" << flush;
+
         }
     }
-    cout << "Done\n";
+    cout << "\n";
+    cout << "=========================================\n";
+    cout << "  Comparing Finished Successfully! ^_^\n";
+    cout << "=========================================\n";
+
     sort(similarSubmissions.begin(), similarSubmissions.end(), [](pair<pair<submission, submission>, double> a, pair<pair<submission, submission>, double> b){
         return a.second > b.second;
     });
