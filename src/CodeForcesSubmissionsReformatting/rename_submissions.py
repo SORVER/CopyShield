@@ -31,6 +31,9 @@ def rename_files():
         elif(lang.find('C') != -1):
             old_file = os.path.join(submissions_folder, f'{id}.c')
             new_file = os.path.join(submissions_folder, f'[{relativeTimeMinutes}]_{id}_{verdict}_{authorHandle}_{problemIndex}.c')
+        elif(lang.find('C#') != -1):
+            old_file = os.path.join(submissions_folder, f'{id}.cs')
+            new_file = os.path.join(submissions_folder, f'[{relativeTimeMinutes}]_{id}_{verdict}_{authorHandle}_{problemIndex}.cs')
 
         try:
             os.rename(old_file, new_file)
