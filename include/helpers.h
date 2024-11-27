@@ -10,3 +10,4 @@ vector<long long> Hash_n_Grams(vector<string> grams);
 vector<string> Generate_n_grams(string code);
 void showUsage();
 vector<string> LCS(vector<string> a, vector<string> b);
+void clear();

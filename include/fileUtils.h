@@ -1,17 +1,29 @@
-#pragma once 
+#pragma once
 
-#ifdef _WIN32
-#include <direct.h> // For _mkdir, _rmdir
-#else
-#include <sys/stat.h> // For mkdir
-#include <unistd.h>   // For rmdir
-#endif
+#include <filesystem> 
 
-// Macro definitions for creating and removing directories
-#ifdef _WIN32
-#define CREATE_DIR(name) _mkdir(name)
-#define REMOVE_DIR(name) _rmdir(name)
-#else
-#define CREATE_DIR(name) mkdir(name, 0777)
-#define REMOVE_DIR(name) system(("rm -rf " + string(name)).c_str()) 
-#endif
+namespace fs = std::filesystem;
+
+inline bool createDirectory(const std::string& dirName) {
+    try {
+        if (!fs::exists(dirName)) {
+            return fs::create_directory(dirName);
+        }
+        return true;
+    } catch (const std::exception& e) {
+        std::cerr << "Error creating directory " << dirName << ": " << e.what() << std::endl;
+        return false;
+    }
+}
+
+inline bool removeDirectory(const std::string& dirName) {
+    try {
+        if (fs::exists(dirName)) {
+            return fs::remove_all(dirName) > 0;  
+        }
+        return false; 
+    } catch (const std::exception& e) {
+        std::cerr << "Error removing directory " << dirName << ": " << e.what() << std::endl;
+        return false;
+    }
+}

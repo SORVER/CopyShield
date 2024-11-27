@@ -1,6 +1,11 @@
 #pragma once 
 
-void exportCSV();
-void ExportHTML();
-void ExportParticipantsCSV();  // contains handle and int for number of occurences
-void ExportPairsOccurences();  // contains username1, username2, # of occurences of the pair
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+void exportCSV(string reportDir);
+void ExportHTML(string reportDir);
+void ExportParticipantsCSV(string reportDir);  // contains handle and int for number of occurences
+void ExportPairsOccurences(string reportDir);  // contains username1, username2, # of occurences of the pair

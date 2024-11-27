@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
 #include "../include/helpers.h"
 #include "../include/config.h"
+#include "../include/fileManager.h"
+#include "../include/filters.h"
+#include "../include/submissions.h"
 
 using namespace std;
 
@@ -90,4 +93,12 @@ void showUsage() {
     cout << "  --prime, -p <value>                               Set the prime value for hashing (default: 31)\n";
     cout << "  --help, -h                                        Show this help message\n";
 
+}
+
+void clear(){
+    diff.clear();
+    similar.clear();
+    files.clear();
+    submissions.clear();
+    similarSubmissions.clear();
 }

@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void exportCSV(){
+void exportCSV(string reportDir) {
     if(similarSubmissions.size() == 0){
         ofstream file("reports/result.csv");
         file << "No Similar Submissions Found\n";
@@ -22,7 +22,7 @@ void exportCSV(){
     file.close();
 }
 
-void ExportParticipantsCSV() {
+void ExportParticipantsCSV(string reportDir) {
     if(similarSubmissions.size() == 0){
         ofstream file("reports/participants.csv");
         file << "No Similar Submissions Found\n";
@@ -66,7 +66,7 @@ void ExportParticipantsCSV() {
     file.close();
 }
 
-void ExportPairsOccurences() {
+void ExportPairsOccurences(string reportDir) {
     if(similarSubmissions.size() == 0){
         ofstream file("reports/pairs.csv");
         file << "No Similar Submissions Found\n";
@@ -107,11 +107,16 @@ void ExportPairsOccurences() {
 }
 
 
-void ExportHTML() {
+void ExportHTML(string reportDir) {
 
     // CREATE_DIR("reports/reportsHTML");
 
-    CREATE_DIR("reports/HTMLreports");
+
+    string path = reportDir + "/HTMLreports";
+
+    // CREATE_DIR(path.c_str());
+
+    createDirectory(path);
 
 
     // if (CREATE_DIR("reports/reportsHTML") == 0) {
@@ -122,7 +127,7 @@ void ExportHTML() {
 
 
     // Create index.html file in the root directory
-    std::ofstream htmlFile("reports/index.html");
+    std::ofstream htmlFile(reportDir + "/index.html");
     htmlFile << "<!DOCTYPE html>\n<html>\n<head>\n";
     htmlFile << "<meta charset='UTF-8'>\n";
     htmlFile << "<meta name='viewport' content='width=device-width, initial-scale=1.0'>\n";
@@ -158,7 +163,7 @@ void ExportHTML() {
         // List item with similarity percentage and button
         htmlFile << "<li>\n";
         htmlFile << "<span class='similarity'>Similarity: " << int(similarity) << "%</span>\n";
-        htmlFile << "<button onclick=\"window.location.href='HTMLreports/report_" << sub1.SubmissionId << "_" << sub2.SubmissionId << ".html';\">View Report</button>\n";
+        htmlFile << "<button onclick=\"window.location.href='" << "HTMLreports/report_" << sub1.SubmissionId << "_" << sub2.SubmissionId << ".html';\">View Report</button>\n";
         htmlFile << "</li>\n";
     }
     htmlFile << "</ul>\n";
@@ -170,7 +175,7 @@ void ExportHTML() {
         double similarity = pair.second;
 
         // Create individual detailed report
-        std::ofstream detailFile("reports/HTMLreports/report_" + sub1.SubmissionId + "_" + sub2.SubmissionId + ".html");
+        std::ofstream detailFile(reportDir + "/HTMLreports/report_" + sub1.SubmissionId + "_" + sub2.SubmissionId + ".html");
 
         detailFile << "<!DOCTYPE html>\n<html>\n<head>\n";
         detailFile << "<meta charset='UTF-8'>\n";
