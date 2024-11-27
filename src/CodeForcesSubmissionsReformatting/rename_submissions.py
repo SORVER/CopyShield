@@ -1,5 +1,7 @@
 import os
 import json
+import re
+import shutil
 
 def rename_files():
     submissions_folder = os.path.join(os.path.dirname(__file__), "submissions")
@@ -28,19 +30,21 @@ def rename_files():
         elif(lang.find('C#') != -1):
             old_file = os.path.join(submissions_folder, f'{id}.cs')
             new_file = os.path.join(submissions_folder, f'[{relativeTimeMinutes}]_{id}_{verdict}_{authorHandle}_{problemIndex}.cs')
-        elif(lang.find('Python') != -1 or lang.find('Py') != -1):
+        elif(lang.find('Py') != -1 or lang.find('Py') != -1):
             old_file = os.path.join(submissions_folder, f'{id}.py')
             new_file = os.path.join(submissions_folder, f'[{relativeTimeMinutes}]_{id}_{verdict}_{authorHandle}_{problemIndex}.py')
+        elif(lang.find('Java') != -1):
+            old_file = os.path.join(submissions_folder, f'{id}.java')
+            new_file = os.path.join(submissions_folder, f'[{relativeTimeMinutes}]_{id}_{verdict}_{authorHandle}_{problemIndex}.java')
         elif(lang.find('C') != -1):
             old_file = os.path.join(submissions_folder, f'{id}.c')
             new_file = os.path.join(submissions_folder, f'[{relativeTimeMinutes}]_{id}_{verdict}_{authorHandle}_{problemIndex}.c')
 
         try:
             os.rename(old_file, new_file)
-            print(f'Renamed: {old_file} -> {new_file}')
+            # print(f'Renamed: {old_file} -> {new_file}')
         except FileNotFoundError:
             print(f'File not found: {old_file}')
         except Exception as e:
             print(f'Error renaming {old_file}: {e}')
 
-rename_files()
