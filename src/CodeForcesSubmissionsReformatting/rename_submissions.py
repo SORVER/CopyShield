@@ -48,3 +48,38 @@ def rename_files():
         except Exception as e:
             print(f'Error renaming {old_file}: {e}')
 
+
+def distribute_files_to_folders():
+    submissions_folder = os.path.join(os.path.dirname(__file__), "submissions")
+
+    folder_path = os.path.join(submissions_folder, "Uncategorized")
+    os.makedirs(folder_path, exist_ok=True)
+
+    for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+        folder_path = os.path.join(submissions_folder, letter)
+        os.makedirs(folder_path, exist_ok=True)
+        print(f"Created folder '{folder_path}'.")
+
+        for file_name in os.listdir(submissions_folder):
+            file_path = os.path.join(submissions_folder, file_name)
+
+            if not os.path.isfile(file_path):
+                continue
+        
+            match = re.search(rf"_({letter})\.", file_name)
+            if match:
+                print(f"{letter} {file_name}")
+                letter = match.group(1) 
+                target_folder = os.path.join(submissions_folder, letter)
+                shutil.move(file_path, os.path.join(target_folder, file_name))
+            else:
+                target_folder = os.path.join(submissions_folder, "Uncategorized")
+                shutil.move(file_path, os.path.join(target_folder, file_name))
+                # print(f"File '{file_name}' does not match the pattern and will be skipped.")
+
+    print("File distribution complete.")
+
+if __name__ == "__main__":
+    # rename_files()
+    distribute_files_to_folders()
+    
