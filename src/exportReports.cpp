@@ -257,15 +257,14 @@ void ExportHTML(string reportDir) {
 }
 
 
-void ExportIndex(){
-    // contains links to all problems' reports 
-    // i mean each problem has a directory and in this directory there are all the reports of the pairs of this problem
-    // so we need to create a file that contains the links to all the problems' directories
-    // example : A/index.html 
-    // so links in the index.html file will contains the links to all the problems' directories
+void ExportIndex() {
+    // Contains links to all problems' reports
+    // Each problem has a directory, and in this directory, there are all the reports of the pairs for this problem.
+    // We need to create a file that contains the links to all the problem directories
+    // Example: A/index.html
+    // So links in the index.html file will contain the links to all the problem directories
 
-
-    string baseDir = "reports";
+    std::string baseDir = "reports";
 
     std::ofstream indexFile("index.html");
     if (!indexFile.is_open()) {
@@ -273,21 +272,51 @@ void ExportIndex(){
         return;
     }
 
-    indexFile << "<!DOCTYPE html>\n<html>\n<head>\n<title>Problem Reports</title>\n</head>\n<body>\n";
-    indexFile << "<h1>List of Problem Reports</h1>\n<ul>\n";
+    // Writing the HTML structure with added styles
+    indexFile << "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n"
+              << "<meta charset=\"UTF-8\">\n"
+              << "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
+              << "<title>Problem Reports</title>\n"
+              << "<style>\n"
+              << "/* Reset styles for consistency across browsers */\n"
+              << "body, h1, ul, li { margin: 0; padding: 0; }\n"
+              << "html, body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f7f7f7, #e3e3e3); color: #333; height: 100%; }\n"
+              << "header { background-color: #2c3e50; color: white; text-align: center; padding: 20px 0; }\n"
+              << "header h1 { font-size: 3em; text-transform: uppercase; letter-spacing: 1px; }\n"
+              << "main { padding: 30px; display: flex; justify-content: center; }\n"
+              << "ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; list-style: none; padding: 0; }\n"
+              << "li { position: relative; background: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; }\n"
+              << "a { display: block; padding: 20px; text-decoration: none; text-align: center; font-size: 1.2em; color: #3498db; font-weight: bold; transition: color 0.3s ease, background-color 0.3s ease; }\n"
+              << "a:hover { background-color: #3498db; color: white; }\n"
+              << "li:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); background-color: #f1f1f1; }\n"
+              << "footer { text-align: center; padding: 20px; background-color: #2c3e50; color: white; }\n"
+              << "footer p { font-size: 0.9em; }\n"
+              << "@media (max-width: 768px) { header h1 { font-size: 2.5em; } }\n"
+              << "@media (max-width: 500px) { ul { grid-template-columns: 1fr; } }\n"
+              << "</style>\n"
+              << "</head>\n<body>\n";
 
+    // Header section
+    indexFile << "<header>\n<h1>Problem Reports</h1>\n</header>\n";
+
+    // Main content section
+    indexFile << "<main>\n<ul>\n";
+
+    // Iterate through directories and generate links
     for (const auto& entry : fs::directory_iterator(baseDir)) {
         if (fs::is_directory(entry)) {
             std::string problemName = entry.path().filename().string();
-            std::string link = "reports/" + problemName + "/index.html";  
+            std::string link = "reports/" + problemName + "/index.html";
             indexFile << "<li><a href=\"" << link << "\">" << problemName << "</a></li>\n";
         }
     }
 
-    indexFile << "</ul>\n</body>\n</html>\n";
+    indexFile << "</ul>\n</main>\n";
+
+    indexFile << "<footer>\n<p>&copy; 2024 Problem Reports. All rights reserved.</p>\n</footer>\n";
+
+    indexFile << "</body>\n</html>\n";
     indexFile.close();
 
     std::cout << "index.html has been created successfully!" << std::endl;
-    
-
 }
