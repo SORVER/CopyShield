@@ -42,21 +42,14 @@ double JaccardSimilarity(vector<long long> fingerPrints1, vector<long long> fing
     return (double)intersection.size() / unionSet.size();
 }
 
-void Compare() {
+void Compare(string path) {
     cout << fixed << setprecision(0);
-    // for(auto i : submissions){
-    //     cout << i.username << ' ' << i.problem << ' ' << i.verdict <<  ' ' << i.SubmissionId << '\n';
-    // }
     int totalIterations = files.size() * (files.size() - 1) / 2;
     int currentIteration = 0;
     const int barWidth = 50; 
     for (int i = 0; i < files.size(); i++) {
-        // cout << i << '\n';
         for (int j = i + 1; j < files.size(); j++) {
-            // cout << j << ' ' << submissions[j].SubmissionId << '\n';
-            // if(submissions[j].SubmissionId.empty()){
-            //     cout << "Empty\n";
-            // }
+
             string code1, code2;
 
 
@@ -81,21 +74,8 @@ void Compare() {
             }
 
 
-            // getline(*files[i], code1, '\0');
-            // files[i]->clear();               
-            // files[i]->seekg(0, ios::beg);     
-            
-            // getline(*files[j], code2, '\0');
-            // files[j]->clear();
-            // files[j]->seekg(0, ios::beg);
-
-
-
-
             code1 = submissions[i].code;
             code2 = submissions[j].code;
-
-
 
 
             string code1Temp = code1;
@@ -151,10 +131,13 @@ void Compare() {
 
         }
     }
+
+    string problemName = path.substr(path.find_last_of('/') + 1);
+
     cout << "\n";
-    cout << "=========================================\n";
-    cout << "  Comparing Finished Successfully! ^_^\n";
-    cout << "=========================================\n";
+    cout << "=================================================================================\n";
+    cout << "  Comparing " << (problemName == "Uncategorized" ? "problem" : "") << problemName << " submissions Finished Successfully! ^_^\n";
+    cout << "=================================================================================\n";
 
     sort(similarSubmissions.begin(), similarSubmissions.end(), [](pair<pair<submission, submission>, double> a, pair<pair<submission, submission>, double> b){
         return a.second > b.second;

@@ -197,7 +197,7 @@ int main(int argc, char *argv[]) {
 
 
                     // Generate reports
-                    Compare();
+                    Compare(childPath);
                     exportCSV(childPath);
                     ExportHTML(childPath);
                     ExportParticipantsCSV(childPath);

@@ -281,7 +281,7 @@ void ExportIndex() {
               << "/* Reset styles for consistency across browsers */\n"
               << "body, h1, ul, li { margin: 0; padding: 0; }\n"
               << "html, body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f7f7f7, #e3e3e3); color: #333; height: 100%; }\n"
-              << "header { background-color: #2c3e50; color: white; text-align: center; padding: 20px 0; }\n"
+              << "header { background-color: #28a745; color: white; text-align: center; padding: 20px 0; }\n"
               << "header h1 { font-size: 3em; text-transform: uppercase; letter-spacing: 1px; }\n"
               << "main { padding: 30px; display: flex; justify-content: center; }\n"
               << "ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; list-style: none; padding: 0; }\n"
