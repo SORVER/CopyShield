@@ -114,6 +114,7 @@ void ExportHTML(string reportDir) {
 
     string path = reportDir + "/HTMLreports";
 
+
     // CREATE_DIR(path.c_str());
 
     createDirectory(path);
@@ -253,4 +254,40 @@ void ExportHTML(string reportDir) {
 
     // Close the main index file
     htmlFile.close();
+}
+
+
+void ExportIndex(){
+    // contains links to all problems' reports 
+    // i mean each problem has a directory and in this directory there are all the reports of the pairs of this problem
+    // so we need to create a file that contains the links to all the problems' directories
+    // example : A/index.html 
+    // so links in the index.html file will contains the links to all the problems' directories
+
+
+    string baseDir = "reports";
+
+    std::ofstream indexFile("index.html");
+    if (!indexFile.is_open()) {
+        std::cerr << "Failed to create index.html file!" << std::endl;
+        return;
+    }
+
+    indexFile << "<!DOCTYPE html>\n<html>\n<head>\n<title>Problem Reports</title>\n</head>\n<body>\n";
+    indexFile << "<h1>List of Problem Reports</h1>\n<ul>\n";
+
+    for (const auto& entry : fs::directory_iterator(baseDir)) {
+        if (fs::is_directory(entry)) {
+            std::string problemName = entry.path().filename().string();
+            std::string link = "reports/" + problemName + "/index.html";  
+            indexFile << "<li><a href=\"" << link << "\">" << problemName << "</a></li>\n";
+        }
+    }
+
+    indexFile << "</ul>\n</body>\n</html>\n";
+    indexFile.close();
+
+    std::cout << "index.html has been created successfully!" << std::endl;
+    
+
 }

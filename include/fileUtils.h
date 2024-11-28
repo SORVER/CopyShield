@@ -27,3 +27,28 @@ inline bool removeDirectory(const std::string& dirName) {
         return false;
     }
 }
+
+inline bool createFile(const std::string& fileName) {
+    try {
+        if (!fs::exists(fileName)) {
+            std::ofstream file(fileName);
+            return true;
+        }
+        return false;
+    } catch (const std::exception& e) {
+        std::cerr << "Error creating file " << fileName << ": " << e.what() << std::endl;
+        return false;
+    }
+}
+
+inline bool removeFile(const std::string& fileName) {
+    try {
+        if (fs::exists(fileName)) {
+            return fs::remove(fileName);
+        }
+        return false;
+    } catch (const std::exception& e) {
+        std::cerr << "Error removing file " << fileName << ": " << e.what() << std::endl;
+        return false;
+    }
+}

@@ -207,6 +207,8 @@ int main(int argc, char *argv[]) {
                 }
             }
         }
+
+        ExportIndex();
     } catch (const exception& e) {
         cerr << "Error: " << e.what() << '\n';
     }
