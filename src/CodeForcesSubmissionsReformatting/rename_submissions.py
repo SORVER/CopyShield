@@ -52,34 +52,27 @@ def rename_files():
 def distribute_files_to_folders():
     submissions_folder = os.path.join(os.path.dirname(__file__), "submissions")
 
-    folder_path = os.path.join(submissions_folder, "Uncategorized")
-    os.makedirs(folder_path, exist_ok=True)
+    
+    for file in os.listdir(submissions_folder):
+        if os.path.isfile(os.path.join(submissions_folder, file)):
+            found = 0
+            for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                match = re.search(rf"_({letter})\.", file)
+                if match:
+                    folder_path = os.path.join(submissions_folder, match.group(1))
+                    os.makedirs(folder_path, exist_ok=True) # 
+                    shutil.move(os.path.join(submissions_folder, file), os.path.join(folder_path, file))
+                    found = 1
+                    break
+            if not found:
+                folder_path = os.path.join(submissions_folder, "Uncategorized")
+                os.makedirs(folder_path, exist_ok=True)
+                shutil.move(os.path.join(submissions_folder, file), os.path.join(submissions_folder, "Uncategorized", file))
 
-    for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-        folder_path = os.path.join(submissions_folder, letter)
-        os.makedirs(folder_path, exist_ok=True)
-        print(f"Created folder '{folder_path}'.")
-
-        for file_name in os.listdir(submissions_folder):
-            file_path = os.path.join(submissions_folder, file_name)
-
-            if not os.path.isfile(file_path):
-                continue
-        
-            match = re.search(rf"_({letter})\.", file_name)
-            if match:
-                print(f"{letter} {file_name}")
-                letter = match.group(1) 
-                target_folder = os.path.join(submissions_folder, letter)
-                shutil.move(file_path, os.path.join(target_folder, file_name))
-            else:
-                target_folder = os.path.join(submissions_folder, "Uncategorized")
-                shutil.move(file_path, os.path.join(target_folder, file_name))
-                # print(f"File '{file_name}' does not match the pattern and will be skipped.")
 
     print("File distribution complete.")
 
 if __name__ == "__main__":
-    # rename_files()
+    rename_files()
     distribute_files_to_folders()
     
