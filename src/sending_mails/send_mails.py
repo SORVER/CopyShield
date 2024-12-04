@@ -71,6 +71,12 @@ def process_and_email(handles_file, flags_file, api_key, api_secret):
     }
     missing_handles = []
 
+    shared_file = os.path.abspath("../shared.txt")
+
+    with open(shared_file , "r") as f: 
+        sheet_name = f.read().strip()
+        
+
     for entry in handles_data:
         handle = entry.get('Handle')
         email = entry.get('Email')
@@ -93,7 +99,7 @@ def process_and_email(handles_file, flags_file, api_key, api_secret):
             subject = "CIA SHA ICPC Training: "
             body = (
                 f"Dear {name},\n\n"
-                f"You are being watched by the CIA (Codeforces Integrity Agency) members in SHA, and they’ve noticed some *unusual activity* in problem {problem} during the training. "
+                f"You are being watched by the CIA (Codeforces Integrity Agency) members in SHA, and they’ve noticed some *unusual activity* in sheet: {sheet_name}, problem: {problem} during the training. "
                 f"We know you’re brilliant, but even brilliance has its limits so let’s keep things honest, shall we? 🕵️‍♂️\n\n"
                 f"Remember, this training is about learning and growing, not shortcuts. If you think there’s been a mistake, reach out to the SHAC ICPC Coaches. "
                 f"We’ll be happy to clear things up (and no, we’re not secretly spying on you probably). 😉\n\n"

@@ -87,7 +87,16 @@ int main(int argc, char *argv[]) {
                 if (PRIME < 1) {
                     throw out_of_range("Prime must be greater than 0");
                 }
-            } else if (arg == "--help" || arg == "-h") {
+            } else if(arg == "--sheetname"){
+                if(i + 1 >= argc){
+                    throw invalid_argument("Missing value for --sheetname");
+                }
+                SHEETNAME = argv[++i];
+                ofstream file("../shared.txt");
+                file << SHEETNAME;
+                file.close();
+            } 
+            else if (arg == "--help" || arg == "-h") {
                 showUsage();
                 return 0;
             } else {
