@@ -9,30 +9,33 @@ using namespace std;
 
 void exportCSV(string reportDir) {
     if(similarSubmissions.size() == 0){
-        ofstream file("reports/result.csv");
-        file << "No Similar Submissions Found\n";
-        file.close();
         return;
     }
     ofstream file("reports/result.csv");
-    file << "Username1, Username2, Problem, CodeId1, CodeId2, Similarity\n";
+    if(file.tellp() == 0){
+        file << "Username1, Username2, Problem, CodeId1, CodeId2, Similarity\n";
+    }
     for(auto i : similarSubmissions){
-        file << i.first.first.username << "," << i.first.second.username << "," << i.first.first.problem << "," << i.first.first.SubmissionId << "," << i.first.second.SubmissionId << "," << i.second << '\n';
+        file << i.first.first.username << ","
+         << i.first.second.username << ","
+          << i.first.first.problem << ","
+           << i.first.first.SubmissionId << ","
+            << i.first.second.SubmissionId << ","
+             << i.second << '\n';
     }
     file.close();
 }
 
 void ExportParticipantsCSV(string reportDir) {
     if(similarSubmissions.size() == 0){
-        ofstream file("reports/participants.csv");
-        file << "No Similar Submissions Found\n";
-        file.close();
         return;
     }
     map<string, int> participants;
     ofstream file("reports/participants.csv");
-    file << "Handle,Score,Flag\n";
 
+    if(file.tellp() == 0){
+        file << "Handle,Score,Flag\n";
+    }
 
 
     for (const auto &pair : similarSubmissions) {
@@ -68,14 +71,13 @@ void ExportParticipantsCSV(string reportDir) {
 
 void ExportPairsOccurences(string reportDir) {
     if(similarSubmissions.size() == 0){
-        ofstream file("reports/pairs.csv");
-        file << "No Similar Submissions Found\n";
-        file.close();
         return;
     }
     map<pair<string, string>, vector<int>> pairs;
     ofstream file("reports/pairs.csv");
-    file << "Username1, Username2, Occurences\n";
+    if(file.tellp() == 0){
+        file << "Username1, Username2, Occurences\n";
+    }
     for(auto i : similarSubmissions){
         pairs[{i.first.first.username, i.first.second.username}].push_back(i.second);
     }

@@ -106,7 +106,7 @@ def process_and_email(handles_file, flags_file, api_key, api_secret):
 
 if __name__ == "__main__":
     try:
-        handles_csv = os.path.abspath("src/sending_mails/group_data.csv")
+        handles_csv = os.path.abspath("./sending_mails/group_data.csv")
         flags_csv = os.path.abspath("reports/participants.csv")
 
         api_secret = os.getenv('MAILJET_API_SECRET')
