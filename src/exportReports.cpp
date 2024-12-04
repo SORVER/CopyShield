@@ -30,40 +30,73 @@ void ExportParticipantsCSV(string reportDir) {
     if(similarSubmissions.size() == 0){
         return;
     }
-    map<string, int> participants;
+    map<string , pair<int,string>> participants;   // name , <score , MaxProblem>
     ofstream file("reports/participants.csv");
 
     if(file.tellp() == 0){
-        file << "Handle,Score,Flag\n";
+        file << "Handle,Score,MaxProblem,Flag\n";
     }
 
-
-    for (const auto &pair : similarSubmissions) {
-        if(pair.second >= 90) {
-            participants[pair.first.second.username] = 9999999;
-            participants[pair.first.first.username] = 9999999;
-        } else if (pair.second >= 70 && pair.second < 90){
-            participants[pair.first.second.username] += 10000;
-            participants[pair.first.first.username] += 10000;
-        } else if (pair.second >= 50 && pair.second < 70){
-            participants[pair.first.second.username] += 1000;
-            participants[pair.first.first.username] += 1000;
-        } else if (pair.second >= 40 && pair.second < 50){
-            participants[pair.first.second.username] += 250;
-            participants[pair.first.first.username] += 250;
-        } else {
-            participants[pair.first.second.username] += 100;
-            participants[pair.first.first.username] += 100;
-        }
-    }
-
-    vector<pair<string, int>> participantsVec(participants.begin(), participants.end());
-    sort(participantsVec.begin(), participantsVec.end(), [](pair<string, int> a, pair<string, int> b){
+    sort(similarSubmissions.begin(), similarSubmissions.end(), [](pair<pair<submission, submission>, double> a, pair<pair<submission, submission>, double> b){
         return a.second > b.second;
     });
 
+    for (const auto &pair : similarSubmissions) {
+        if(pair.second >= 90) {
+            if(participants.find(pair.first.second.username) == participants.end()){
+                participants[pair.first.second.username].second = pair.first.second.problem;
+            }
+            if(participants.find(pair.first.first.username) == participants.end()){
+                participants[pair.first.first.username].second = pair.first.first.problem;
+            }
+            participants[pair.first.second.username].first = 9999999;
+            participants[pair.first.first.username].first = 9999999;
+        } else if (pair.second >= 70 && pair.second < 90){
+            if(participants.find(pair.first.second.username) == participants.end()){
+                participants[pair.first.second.username].second = pair.first.second.problem;
+            }
+            if(participants.find(pair.first.first.username) == participants.end()){
+                participants[pair.first.first.username].second = pair.first.first.problem;
+            }
+            participants[pair.first.second.username].first += 10000;
+            participants[pair.first.first.username].first += 10000;
+        } else if (pair.second >= 50 && pair.second < 70){
+           if(participants.find(pair.first.second.username) == participants.end()){
+                participants[pair.first.second.username].second = pair.first.second.problem;
+            }
+            if(participants.find(pair.first.first.username) == participants.end()){
+                participants[pair.first.first.username].second = pair.first.first.problem;
+            }
+            participants[pair.first.second.username].first += 1000;
+            participants[pair.first.first.username].first += 1000;
+        } else if (pair.second >= 40 && pair.second < 50){
+            if(participants.find(pair.first.second.username) == participants.end()){
+                participants[pair.first.second.username].second = pair.first.second.problem;
+            }
+            if(participants.find(pair.first.first.username) == participants.end()){
+                participants[pair.first.first.username].second = pair.first.first.problem;
+            }
+            participants[pair.first.second.username].first += 250;
+            participants[pair.first.first.username].first += 250;
+        } else {
+            if(participants.find(pair.first.second.username) == participants.end()){
+                participants[pair.first.second.username].second = pair.first.second.problem;
+            }
+            if(participants.find(pair.first.first.username) == participants.end()){
+                participants[pair.first.first.username].second = pair.first.first.problem;
+            }
+            participants[pair.first.second.username].first += 100;
+            participants[pair.first.first.username].first += 100;
+        }
+    }
+
+    vector<pair<string, pair<int,string>>> participantsVec(participants.begin(), participants.end());
+    sort(participantsVec.begin(), participantsVec.end(), [](pair<string, pair<int,string>> a, pair<string, pair<int,string>> b){
+        return a.second.first > b.second.first;
+    });
+
     for(auto i : participantsVec){
-        file << i.first << "," << i.second << ","<< "False" << '\n';
+        file << i.first << "," << i.second.first << "," << i.second.second << "," << "False" << '\n'; 
     }
 
     file.close();

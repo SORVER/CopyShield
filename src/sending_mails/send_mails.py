@@ -65,7 +65,10 @@ def process_and_email(handles_file, flags_file, api_key, api_secret):
         print("Error: No data found in flags CSV file.")
         return
 
-    flags_dict = {row.get('Handle'): row.get('Flag') == 'True' for row in flags_data}
+    flags_dict = {
+        row.get('Handle'): (row.get('MaxProblem'), row.get('Flag') == 'True') 
+        for row in flags_data
+    }
     missing_handles = []
 
     for entry in handles_data:
@@ -85,11 +88,12 @@ def process_and_email(handles_file, flags_file, api_key, api_secret):
         # for handle, flag in flags_dict.items():
         #     print(f"{handle}: {flag}")
         if flags_dict[handle]:
+            problem = flags_dict[handle][0]
             print(f"Flagged handle: {handle}")
             subject = "CIA SHA ICPC Training: "
             body = (
                 f"Dear {name},\n\n"
-                f"You are being watched by the CIA (Codeforces Integrity Agency) members in SHA, and they’ve noticed some *unusual activity* during the training. "
+                f"You are being watched by the CIA (Codeforces Integrity Agency) members in SHA, and they’ve noticed some *unusual activity* in problem {problem} during the training. "
                 f"We know you’re brilliant, but even brilliance has its limits so let’s keep things honest, shall we? 🕵️‍♂️\n\n"
                 f"Remember, this training is about learning and growing, not shortcuts. If you think there’s been a mistake, reach out to the SHAC ICPC Coaches. "
                 f"We’ll be happy to clear things up (and no, we’re not secretly spying on you probably). 😉\n\n"
