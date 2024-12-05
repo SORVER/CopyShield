@@ -1,4 +1,4 @@
-# CopyShield
+# CopyShield 🛡️
 
 ## Table of Contents
 
@@ -6,6 +6,8 @@
 - [Report Generation](#report-generation)
   * [CSV Reports](#csv-reports)
   * [HTML Report](#html-report)
+    + [Code Comparison Visualization](#Code-comparison-visualization)
+      - [How it works ?](#how-it-works--)
 - [How it works ?](#how-it-works-)
 - [Getting Started](#Getting-Started)
   * [Setting up the environment](#setting-up-the-environment)
@@ -22,7 +24,7 @@
         + [Example](#example)
 - [TODO](#todo)
 
-## What is CopyShield ?
+## What is CopyShield ? 🤔
 
 CopyShield is a simple Plagiarism Detection tool, which reads collection of documents and checks for similarity between them. It  can be used to detect plagiarism in documents or source codes.
 
@@ -48,7 +50,7 @@ The program generates an HTML report containing the code snippets of the all pai
 
 ![HTML report](https://github.com/saifadin1/CopyShield/blob/main/res/image4.png)
 
-#### Code Comparison Visualization
+#### Code Comparison Visualization 📊
 
 Our application includes a Code Comparison Visualization feature that makes it easy to identify differences between two sets of code
 
@@ -58,7 +60,9 @@ The left side displays the first (who submit first) participant's code and the r
 the differences are highlighted as follows:
 - Green: The code that second participant added.
 - Red: The code that second participant removed.
-- blue : The code that is common between the two participants.
+- Blue : The code that is common between the two participants.
+
+note: the order of the participants in submission time is only available in codeforces submissions, (not in vjudge case cuz can't know who submit first ¯\\_(ツ)_/¯ ).
 
 you can see the example below to understand it better 👇👇.
 
@@ -69,7 +73,7 @@ you can see the example below to understand it better 👇👇.
 
 
 
-## How it works ?
+## How it works ? 🛠️
 
 1. **Text Preprocessing**: The code from each file is preprocessed to remove comments and whitespace, and all characters are converted to lowercase.
 
@@ -81,7 +85,7 @@ you can see the example below to understand it better 👇👇.
 
 5. **Similarity Calculation**: The program computes Jaccard Similarity between fingerprints of each pair of files. If similarity exceeds a threshold , it flags the files as likely duplicates.
 
-## Getting Started
+## Getting Started 🚀
 
 ### Setting up the environment
 
@@ -102,7 +106,7 @@ pip install -r requirements.txt
 
 
 
-### Fetching Submissions
+### Fetching Submissions ⬇️
 
 First, the submissions should be fetched from the online judge (Vjudge or CodeForces especially).
 
@@ -120,7 +124,7 @@ this directory contains two scripts to help you with that:
 
 
 
-### Compile cpp code
+### Compile cpp code 🔨
 
 1. Navigate to the `src` directory using the following command:
 
@@ -140,12 +144,12 @@ g++ *.cpp -o main
 ./src/main ./<path to the directory containing the files to be checked>
 ```
 
-### Getting the reports
+### Getting the reports 🗂️
 
 The reports will be generated in `./reports` directory. 
 
 You should flag participants who have been verified as cheaters to send them emails in `reports/praticapnts.csv`.
-### Sending emails
+### Sending emails 📩
 
 you can send emails to the flagged participants by the following steps
 
@@ -177,7 +181,7 @@ python .\src\sending_mails\send_mails.py
 
 
 
-## Command-Line options 
+## Command-Line options ☰
 
 * Set the threshold value for similarity
     ```bash
@@ -220,7 +224,7 @@ python .\src\sending_mails\send_mails.py
 .\src\main .\problems -t 70 -w 5 -g 3 -p 101 -e problem1,problem2
 ```
 
-## TODO
+## TODO 📝
 
 - [x] Add support for highlighting the similer blocks in the HTML report
 - [ ] Add better hashing function
