@@ -120,7 +120,10 @@ void Compare(string path) {
 
 
             if (similarity >= THRESHOLD && submissions[i].verdict == "AC" && submissions[j].verdict == "AC") {
-                similarSubmissions.push_back({{submissions[i], submissions[j]}, similarity});
+                if(submissions[i].relativeTime > submissions[j].relativeTime) 
+                    similarSubmissions.push_back({{submissions[j], submissions[i]}, similarity});
+                else
+                    similarSubmissions.push_back({{submissions[i], submissions[j]}, similarity}); 
             }
 
             currentIteration++;

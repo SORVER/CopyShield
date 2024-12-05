@@ -48,6 +48,20 @@ The program generates an HTML report containing the code snippets of the all pai
 
 ![HTML report](https://github.com/saifadin1/CopyShield/blob/main/res/image4.png)
 
+#### Code Comparison Visualization
+
+Our application includes a Code Comparison Visualization feature that makes it easy to identify differences between two sets of code
+
+##### How it works ?
+
+The left side displays the first (who submit first) participant's code and the right side displays the second (who submit second) participant's code.
+the differences are highlighted as follows:
+- Green: The code that second participant added.
+- Red: The code that second participant removed.
+- blue : The code that is common between the two participants.
+
+you can see the example below to understand it better 👇👇.
+
 ![HTML report](https://github.com/saifadin1/CopyShield/blob/main/res/image3.png)
 
 ![HTML report](https://github.com/saifadin1/CopyShield/blob/main/res/image5.png)
