@@ -48,7 +48,7 @@ def send_email(sender_email, recipient_email, subject, body, api_key, api_secret
     except Exception as e:
         print(f"Error sending email to {recipient_email}: {e}")
 
-def process_and_email(handles_file, flags_file, api_key, api_secret):
+def process_and_email(handles_file, flags_file, api_key, api_secret, sheet_name):
     """Process handles and send emails based on flags."""
     if not api_key or not api_secret:
         print("Error: Missing Mailjet API key or secret. Ensure they are set in the environment variables.")
@@ -72,9 +72,6 @@ def process_and_email(handles_file, flags_file, api_key, api_secret):
     missing_handles = []
 
     shared_file = os.path.abspath("../shared.txt")
-
-    with open(shared_file , "r") as f: 
-        sheet_name = f.read().strip()
         
 
     for entry in handles_data:
@@ -122,10 +119,11 @@ if __name__ == "__main__":
         api_secret = os.getenv('MAILJET_API_SECRET')
         api_key = os.getenv('MAILJET_API_KEY')
         sender_email = os.getenv('MAILJET_SENDER_EMAIL')
+        sheet_name = os.getenv('CODEFORCES_SHEET_NAME')
 
         if not sender_email:
             raise ValueError("MAILJET_SENDER_EMAIL environment variable is not set.")
 
-        process_and_email(handles_csv, flags_csv, api_key, api_secret)
+        process_and_email(handles_csv, flags_csv, api_key, api_secret, sheet_name)
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
