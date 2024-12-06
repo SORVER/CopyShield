@@ -115,7 +115,7 @@ First, the submissions should be fetched from the online judge (Vjudge or CodeFo
  Simply download the submissions from the contest page as a zip file and files names will be formatted correctly as: `<submission Id>_<Verdict>_<username>_<problem name>`
  the image below shows the export submissions button in the contest page of Vjudge.
 
-![Vjudge export submissions](https://github.com/saifadin1/CopyShield/blob/main/res/image6.pnge)
+![Vjudge export submissions](https://github.com/saifadin1/CopyShield/blob/main/res/image6.png)
 
 #### **CodeForces**
 
