@@ -113,6 +113,9 @@ First, the submissions should be fetched from the online judge (Vjudge or CodeFo
 #### **Vjudge**
 
  Simply download the submissions from the contest page as a zip file and files names will be formatted correctly as: `<submission Id>_<Verdict>_<username>_<problem name>`
+ the image below shows the export submissions button in the contest page of Vjudge.
+
+![Vjudge export submissions](https://github.com/saifadin1/CopyShield/blob/main/res/image6.pnge)
 
 #### **CodeForces**
 
@@ -121,6 +124,10 @@ Similarly, download the submissions as a zip file from the contest page. However
 this directory contains two scripts to help you with that:
 1. `codeforces_api_client.py` : this script will fetch the metadata of the submissions and save it in a json file.
 2. `rename_submissions.py` : this script will rename the files in  `./src/CodeForcesSubmissionsReformatting/submissions` to be formatted so the fetched submissions should be in this path.
+
+you can find the contest admin page in the following path: `https://codeforces.com/group/<group_id>/contest/<contest_id>/admin` and the image below shows the export submissions button in the contest admin page of codeforces.
+
+![Codeforces export submissions](https://github.com/saifadin1/CopyShield/blob/main/res/image7.png)
 
 
 
