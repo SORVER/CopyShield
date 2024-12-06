@@ -177,7 +177,7 @@ to view the HTML report, open the `index.html` file in the browser.
 
 ### Sending emails 📩
 
-You should flag participants who have been verified as cheaters to send them emails in `reports/praticapnts.csv` , all the flagged participants will be marked with `False` in the `Flag` column, 
+You should flag participants who have been verified as cheaters to send them emails in `reports/praticapnts.csv` , all participants will be marked with `False` by defualte in the `Flag` column, 
 so if you confirmed that they are cheaters change the value to `True` and
 you can send emails to the flagged participants by the following steps
 
