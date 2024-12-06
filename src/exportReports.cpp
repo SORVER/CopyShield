@@ -147,7 +147,7 @@ void ExportHTML(string reportDir) {
     // CREATE_DIR("reports/reportsHTML");
 
 
-    string path = reportDir + "/HTMLreports";
+    string path =  reportDir + "/HTMLreports";
 
 
     // CREATE_DIR(path.c_str());
@@ -301,7 +301,7 @@ void ExportIndex() {
 
     std::string baseDir = "reports";
 
-    std::ofstream indexFile("index.html");
+    std::ofstream indexFile("reports/index.html");
     if (!indexFile.is_open()) {
         std::cerr << "Failed to create index.html file!" << std::endl;
         return;
@@ -337,18 +337,26 @@ void ExportIndex() {
     // Main content section
     indexFile << "<main>\n<ul>\n";
 
+
+    string path = "reports/problems_data";
+
     // Iterate through directories and generate links
-    for (const auto& entry : fs::directory_iterator(baseDir)) {
+
+  
+  
+  
+    for (const auto& entry : fs::directory_iterator(path)) {
         if (fs::is_directory(entry)) {
             std::string problemName = entry.path().filename().string();
-            std::string link = "reports/" + problemName + "/index.html";
+            std::string link = "./problems_data/" + problemName + "/index.html";
+            cout << link << '\n';
             indexFile << "<li><a href=\"" << link << "\">" << problemName << "</a></li>\n";
         }
     }
 
     indexFile << "</ul>\n</main>\n";
 
-    indexFile << "<footer>\n<p>&copy; 2024 Problem Reports. All rights reserved.</p>\n</footer>\n";
+    indexFile << "<footer>\n<p>&copy; 2024 CopyShield. All rights reserved.</p>\n</footer>\n";
 
     indexFile << "</body>\n</html>\n";
     indexFile.close();

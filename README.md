@@ -153,11 +153,32 @@ g++ *.cpp -o main
 
 ### Getting the reports 🗂️
 
-The reports will be generated in `./reports` directory. 
+The reports will be generated in `./src/reports` directory as follows structure:
 
-You should flag participants who have been verified as cheaters to send them emails in `reports/praticapnts.csv`.
+```bash
+| reports
+|---| result.csv
+|---| pairs.csv
+|---| participants.csv
+|---| index.html
+|---| problems_data
+|---|---| A
+|---|---|---|HTMLreports
+|---|---|---|index.html
+|---|---| B
+|---|---|---|HTMLreports
+|---|---|---|index.html
+|---|---|..
+|---|---|..
+```
+
+to view the HTML report, open the `index.html` file in the browser.
+
+
 ### Sending emails 📩
 
+You should flag participants who have been verified as cheaters to send them emails in `reports/praticapnts.csv` , all the flagged participants will be marked with `False` in the `Flag` column, 
+so if you confirmed that they are cheaters change the value to `True` and
 you can send emails to the flagged participants by the following steps
 
 #### Prepare a CSV file

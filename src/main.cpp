@@ -113,6 +113,7 @@ int main(int argc, char *argv[]) {
         }
         if (createDirectory(parentPath)) {
             cout << "Created new report directory: " << parentPath << '\n';
+            createDirectory(parentPath + "/problems_data");
         }
 
 
@@ -190,16 +191,21 @@ int main(int argc, char *argv[]) {
 
                     string childPath = "reports/" + childDirPath.filename().string();
 
+                    string childPathForHtmlReports = "reports/problems_data/" + childDirPath.filename().string();
 
-                    if (createDirectory(childPath)) {
-                        cout << "Created new report directory: " << childPath << '\n';
+                    // if (createDirectory(childPath)) {
+                    //     cout << "Created new report directory: " << childPath << '\n';
+                    // }
+
+                    if (createDirectory(childPathForHtmlReports)) {
+                        cout << "Created new report directory: " << childPathForHtmlReports << '\n';
                     }
 
 
                     // Generate reports
                     Compare(childPath);
                     exportCSV(childPath);
-                    ExportHTML(childPath);
+                    ExportHTML(childPathForHtmlReports);
                     ExportParticipantsCSV(childPath);
                     ExportPairsOccurences(childPath);
                 } catch (const exception& e) {
