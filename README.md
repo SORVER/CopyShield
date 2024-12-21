@@ -249,7 +249,7 @@ python .\src\sending_mails\send_mails.py
 ### Example
 
 ```bash
-.\src\main .\problems -t 70 -w 5 -g 3 -p 101 -e problem1,problem2
+.\src\main .\problems -t 70 -w 5 -g 3 -e problem1,problem2
 ```
 
 ## TODO 📝
